@@ -19,10 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F4B33F97-691C-4227-985A-9C2636A79ABA}</ProjectGuid>
+    <ProjectGuid>{CA45AA69-2A7D-49CA-BCF1-337121F6085E}</ProjectGuid>
     <RootNamespace>Agenda</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
+    <ProjectName>Work And Play</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -95,7 +96,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>E:\Projects\VC2015</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
       <AdditionalDependencies>D:\Projects\VC2019\WorkAndPlay\Debug/CustomControls.lib;../AgendaModel/Debug/AgendaModel.lib;D:\Projects\VC2019\Utilities/Debug/Utilities.lib</AdditionalDependencies>
     </Link>
     <Midl>
@@ -189,8 +191,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Agenda.h" />
-    <ClInclude Include="AgendaDialog.h" />
+    <ClInclude Include="WorkAndPlay.h" />
     <ClInclude Include="AgendaFileListBox.h" />
     <ClInclude Include="AgendaItemList.h" />
     <ClInclude Include="AgendaPage.h" />
@@ -203,11 +204,10 @@
     <ClInclude Include="Settings.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TotalsPage.h" />
+    <ClInclude Include="WorkAndPlayDialog.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Agenda.cpp" />
-    <ClCompile Include="AgendaDialog.cpp" />
+    <ClCompile Include="WorkAndPlay.cpp" />
     <ClCompile Include="AgendaFileListBox.cpp" />
     <ClCompile Include="AgendaItemList.cpp" />
     <ClCompile Include="AgendaPage.cpp" />
@@ -223,10 +223,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TotalsPage.cpp" />
+    <ClCompile Include="WorkAndPlayDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Agenda.rc" />
+    <ResourceCompile Include="SimpleAgenda.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Agenda.rc2" />

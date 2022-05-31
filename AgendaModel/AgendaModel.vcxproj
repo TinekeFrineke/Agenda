@@ -88,6 +88,7 @@
     <ClInclude Include="Agenda.h" />
     <ClInclude Include="AgendaUtilities.h" />
     <ClInclude Include="Calculate.h" />
+    <ClInclude Include="IAgendaLoader.h" />
     <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
