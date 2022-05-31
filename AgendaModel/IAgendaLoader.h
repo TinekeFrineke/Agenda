@@ -6,12 +6,13 @@ namespace Agenda
 {
 
 class Agenda;
+class Date;
 
 
 class IAgendaLoader
 {
 public:
-    virtual void Load(std::list<Agenda*>& agendas) = 0;
+    virtual bool LoadAgenda(const Date& date, Agenda& agenda) const = 0;
 };
 
 class WeekLoader

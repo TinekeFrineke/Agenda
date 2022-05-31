@@ -76,25 +76,25 @@ BOOL AgendaApplication::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-  TCHAR cpath[MAX_PATH];
-  GetCurrentDirectory(MAX_PATH, cpath);
+	TCHAR cpath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, cpath);
 
-  Path path(cpath);
+	Path path(cpath);
 
-  // Create the current agenda item
-  Agenda::Agenda agenda;
-  Agenda::Date today;
-  std::tstring agendaname(today.String() + _T(".age"));
-  Path agendapath(path + agendaname);
+	// Create the current agenda item
+	Agenda::Agenda agenda;
+	Agenda::Date today;
+	std::tstring agendaname(today.String() + _T(".age"));
+	Path agendapath(path + agendaname);
 
-  // Create the agenda settings item
-  Path settingspath(path + _T("agenda.ini"));
-  Inifile inifile(settingspath.AsString());
-  Settings settings(path);
-  settings.FillFrom(inifile);
+	// Create the agenda settings item
+	Path settingspath(path + _T("agenda.ini"));
+	Inifile inifile(settingspath.AsString());
+	Settings settings(path);
+	settings.FillFrom(inifile);
 
-  std::wifstream instream(agendapath.AsString().c_str());
-  instream >> agenda;  
+	std::wifstream instream(agendapath.AsString().c_str());
+	instream >> agenda;  
 
 	AgendaDialog dlg(agenda, settings);
 	m_pMainWnd = &dlg;
