@@ -40,7 +40,7 @@ void Settings::WriteTo(Inifile & inifile)
 
   for (unsigned int i = 0; i < m_DefaultActivities.size(); ++i) {
     _stprintf_s(number, _T("%u"), i);
-    inifile[_T("Items")][number] = m_DefaultActivities[i].m_Desctiption
+    inifile[_T("Items")][number] = m_DefaultActivities[i].m_Description
                                    + (m_DefaultActivities[i].m_AddTimeToTotal ? _T(";1") : _T(";0"));
   }
 }
@@ -48,7 +48,7 @@ void Settings::WriteTo(Inifile & inifile)
 bool Settings::HasDefaultActivity(const std::tstring & description) const
 {
   for (size_t i = 0; i < m_DefaultActivities.size(); ++i)
-    if (m_DefaultActivities[i].m_Desctiption == description)
+    if (m_DefaultActivities[i].m_Description == description)
       return true;
 
   return false;
@@ -57,7 +57,7 @@ bool Settings::HasDefaultActivity(const std::tstring & description) const
 bool Settings::ShouldAddDefeaultActivity(const std::tstring & description) const
 {
   for (size_t i = 0; i < m_DefaultActivities.size(); ++i)
-    if (m_DefaultActivities[i].m_Desctiption == description)
+    if (m_DefaultActivities[i].m_Description == description)
       return m_DefaultActivities[i].m_AddTimeToTotal;
 
   return false;

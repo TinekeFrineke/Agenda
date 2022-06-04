@@ -25,15 +25,18 @@ void GetTotals(std::list<const Agenda*> agendas, std::map<std::tstring, Time, St
     }
 }
 
-//void GetWeekTotals(const Date& dateInWeek, std::map<std::tstring, Time, Str::ci_less>& aTotalMap)
-//{
-//    SYSTEMTIME stime = ::Date::GetSundayBefore(dateInWeek.ToSystemTime());
-//    Utils::Date date(Utils::Date::FromSystemTime(stime));
-//
-//    for (size_t i = 0; i < 5; ++i)
-//    {
-//        date.AddDays(1);
-//    }
-//}
+Time GetWorkedTime(const Agenda& agenda, const std::vector<std::tstring>& activitiesToIgnore)
+{
+    typedef std::map<std::tstring, Time, Str::ci_less> TotalsMap;
+    TotalsMap totalsMap;
+    GetTotals(agenda, totalsMap);
+
+    Time totalTime;
+    for (TotalsMap::const_iterator iter = totalsMap.begin(); iter != totalsMap.end(); ++iter)
+        if (std::find(activitiesToIgnore.begin(), activitiesToIgnore.end(), iter->first) == activitiesToIgnore.end())
+            totalTime += iter->second;
+
+    return totalTime;
+}
 
 } // namespace Agenda

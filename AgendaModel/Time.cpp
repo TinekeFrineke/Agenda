@@ -122,6 +122,12 @@ bool operator==(const Time & aTime1, const Time & aTime2)
           aTime1.GetMinute()  == aTime2.GetMinute());
 }
 
+Time operator+(const Time& time1, const Time& time2)
+{
+    Time time(time1);
+    time += time2;
+    return time;
+}
 
 //--------------------------------------------------------------------------
 bool operator< (const Time & aTime1, const Time & aTime2)

@@ -9,27 +9,57 @@
 #include <tchar.h>
 
 #include <CustomControls/ItemListControl.h>
+#include <Utilities/Date.h>
+#include <Utilities/DateUtils.h>
 
-#include "../AgendaModel/AgendaUtilities.h"
+#include "AgendaModel/AgendaUtilities.h"
 
 #include "afxdialogex.h"
 #include "EditItemDialog.h"
+#include "FileLoader.h"
 #include "Settings.h"
+#include "SettingUtils.h"
 
+BEGIN_MESSAGE_MAP(AgendaPage, CDialog)
+    ON_BN_CLICKED(IDC_WORK, &AgendaPage::OnBnClickedWork)
+    ON_BN_CLICKED(IDC_PLAY, &AgendaPage::OnBnClickedPlay)
+    ON_WM_TIMER()
+    //  ON_WM_CREATE()
+    ON_EN_CHANGE(IDC_HOUR, &AgendaPage::OnEnChangeHour)
+    ON_EN_CHANGE(IDC_MINUTE, &AgendaPage::OnEnChangeMinute)
+    ON_NOTIFY(UDN_DELTAPOS, IDC_HOURSPIN, &AgendaPage::OnDeltaposHourspin)
+    ON_NOTIFY(UDN_DELTAPOS, IDC_MINUTESPIN, &AgendaPage::OnDeltaposMinutespin)
+    ON_NOTIFY(NM_DBLCLK, IDC_ACTIVITYLIST, &AgendaPage::OnNMDblclkActivitylist)
+    ON_WM_CREATE()
+    ON_WM_SHOWWINDOW()
+END_MESSAGE_MAP()
 
 // AgendaPage dialog
 
 IMPLEMENT_DYNAMIC(AgendaPage, CDialog)
 
-AgendaPage::AgendaPage(Agenda::Agenda & agenda, Settings & settings, CWnd* pParent /*=NULL*/)
-: CDialog   (IDD_AGENDA_PAGE, pParent),
-  m_Today   (agenda),
-  m_Settings(settings),
-  m_Items   (agenda),
-  m_TimerID (300000)/*,
-    m_WorkButton(RGB(255, 100, 0)),
-    m_PlayButton(RGB(0, 255, 100))*/
+AgendaPage::AgendaPage(Agenda::Agenda & agenda,
+                       Settings& settings,
+                       CWnd* pParent /*=NULL*/)
+:   CDialog   (IDD_AGENDA_PAGE, pParent),
+    m_Today   (agenda),
+    m_Settings(settings),
+    m_Items   (agenda),
+    m_TimerID (300000)
 {
+    Utils::Date newdate(Utils::Date::Today());
+    Agenda::Date Today(Utils::Date::ToSystemTime(newdate));
+    std::vector<Agenda::Date> week(GetWeek(Today));
+
+    auto toIgnore(SettingUtils::ActvitiesToIgnore(settings));
+
+    FileLoader loader(m_Settings);
+    for (const auto& date : week)
+    {
+        Agenda::Agenda oldagenda;
+        loader.LoadAgenda(date, oldagenda);
+        m_WeekTotals += Agenda::GetWorkedTime(oldagenda, toIgnore);
+    }
 }
 
 AgendaPage::~AgendaPage()
@@ -43,12 +73,12 @@ void AgendaPage::UpdateTimer()
 }
 
 void AgendaPage::UpdateTimer(const Agenda::Time & time)
-{
-  TCHAR text[1024];
-  _stprintf_s(text, _T("%0d"), time.GetHour());
-  m_Hour.SetWindowText(text);
-  _stprintf_s(text, _T("%0d"), time.GetMinute());
-  m_Minutes.SetWindowText(text);
+    {
+    TCHAR text[1024];
+    _stprintf_s(text, _T("%0d"), time.GetHour());
+    m_Hour.SetWindowText(text);
+    _stprintf_s(text, _T("%0d"), time.GetMinute());
+    m_Minutes.SetWindowText(text);
 }
 
 BOOL AgendaPage::OnInitDialog()
@@ -114,22 +144,6 @@ void AgendaPage::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(AgendaPage, CDialog)
-    ON_BN_CLICKED(IDC_WORK, &AgendaPage::OnBnClickedWork)
-    ON_BN_CLICKED(IDC_PLAY, &AgendaPage::OnBnClickedPlay)
-    ON_WM_TIMER()
-//  ON_WM_CREATE()
-    ON_EN_CHANGE(IDC_HOUR, &AgendaPage::OnEnChangeHour)
-    ON_EN_CHANGE(IDC_MINUTE, &AgendaPage::OnEnChangeMinute)
-    ON_NOTIFY(UDN_DELTAPOS, IDC_HOURSPIN, &AgendaPage::OnDeltaposHourspin)
-    ON_NOTIFY(UDN_DELTAPOS, IDC_MINUTESPIN, &AgendaPage::OnDeltaposMinutespin)
-    ON_NOTIFY(NM_DBLCLK, IDC_ACTIVITYLIST, &AgendaPage::OnNMDblclkActivitylist)
-    ON_NOTIFY(NM_CUSTOMDRAW, IDC_WORK, &AgendaPage::OnNMCustomdrawWork)
-    ON_WM_CREATE()
-    ON_WM_SHOWWINDOW()
-    ON_NOTIFY(NM_CUSTOMDRAW, IDC_PLAY, &AgendaPage::OnNMCustomdrawPlay)
-END_MESSAGE_MAP()
-
 
 // AgendaPage message handlers
 
@@ -165,6 +179,23 @@ void AgendaPage::AddItem(const std::tstring& Item)
     m_Today.Add(Agenda::Item(stime, Item), true);
 
     UpdateView();
+}
+
+std::vector<Agenda::Date> AgendaPage::GetWeek(const Agenda::Date& today)
+{
+    std::vector<Agenda::Date> dates;
+
+    SYSTEMTIME stime(today.ToSystemTime());
+    SYSTEMTIME sunday(Date::GetSundayBefore(stime));
+    Utils::Date startDate(Utils::Date::FromSystemTime(sunday));
+
+    for (size_t i = 0; i < 6; ++i)
+    {
+        startDate.AddDays(1);
+        dates.push_back(Agenda::Date(Utils::Date::ToSystemTime(startDate)));
+    }
+
+    return dates;
 }
 
 
@@ -220,20 +251,22 @@ void AgendaPage::OnDeltaposMinutespin(NMHDR *pNMHDR, LRESULT *pResult)
 void AgendaPage::UpdateView()
 {
   m_Items.View(m_Today);
-  typedef std::map<std::tstring, Agenda::Time, Str::ci_less> TotalsMap;
-  TotalsMap totalsMap;
-  Agenda::GetTotals(m_Today, totalsMap);
+  Agenda::Time totalTime = Agenda::GetWorkedTime(m_Today, SettingUtils::ActvitiesToIgnore(m_Settings));
 
-  Agenda::Time totalTime;
-  for (TotalsMap::const_iterator iter = totalsMap.begin(); iter != totalsMap.end(); ++iter)
-    if (!m_Settings.HasDefaultActivity(iter->first)
-        || m_Settings.ShouldAddDefeaultActivity(iter->first))
-      totalTime += iter->second;
+  //typedef std::map<std::tstring, Agenda::Time, Str::ci_less> TotalsMap;
+  //TotalsMap totalsMap;
+  //Agenda::GetTotals(m_Today, totalsMap);
+
+  //Agenda::Time totalTime;
+  //for (TotalsMap::const_iterator iter = totalsMap.begin(); iter != totalsMap.end(); ++iter)
+  //  if (!m_Settings.HasDefaultActivity(iter->first)
+  //      || m_Settings.ShouldAddDefeaultActivity(iter->first))
+  //    totalTime += iter->second;
 
   m_Totaal.SetWindowText(totalTime.String().c_str());
 
-  Agenda::GetTotals(m_Today, totalsMap);
-  m_Week.SetWindowText(totalTime.String().c_str());
+  Agenda::Time weekTotals(totalTime + m_WeekTotals);
+  m_Week.SetWindowText(weekTotals.String().c_str());
 }
 
 
@@ -267,22 +300,6 @@ void AgendaPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
   *pResult = 0;
 }
 
-void AgendaPage::OnNMCustomdrawWork(NMHDR* pNMHDR, LRESULT* pResult)
-{
-    LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
-    // TODO: Add your control notification handler code here
-    //SetBkColor(HDC(pNMHDR->hwndFrom), RGB(200, 255, 0));
-    //m_WorkButton.GetWindowDC()->SetBkColor(RGB(255, 0, 0));
-    //m_WorkButton.GetWindowDC()->SetTextColor(RGB(0, 255, 0));
-    //m_WorkButton.Invalidate();
-
-    //m_PlayButton.GetWindowDC()->SetBkColor(RGB(255, 0, 0));
-    //m_PlayButton.GetWindowDC()->SetTextColor(RGB(0, 255, 0));
-    //m_PlayButton.Invalidate();
-    *pResult = 0;
-}
-
-
 int AgendaPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
     if (__super::OnCreate(lpCreateStruct) == -1)
@@ -291,34 +308,4 @@ int AgendaPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
     // TODO:  Add your specialized creation code here
 
     return 0;
-}
-
-
-void AgendaPage::OnShowWindow(BOOL bShow, UINT nStatus)
-{
-    __super::OnShowWindow(bShow, nStatus);
-
-    //m_WorkButton.GetWindowDC()->SetBkColor(RGB(255, 0, 0));
-    //m_WorkButton.GetWindowDC()->SetTextColor(RGB(0, 255, 0));
-    //m_WorkButton.Invalidate();
-
-    //m_PlayButton.GetWindowDC()->SetBkColor(RGB(255, 0, 0));
-    //m_PlayButton.GetWindowDC()->SetTextColor(RGB(0, 255, 0));
-    //m_PlayButton.Invalidate();
-
-    // TODO: Add your message handler code here
-}
-
-
-void AgendaPage::OnNMCustomdrawPlay(NMHDR* pNMHDR, LRESULT* pResult)
-{
-    LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
-    // TODO: Add your control notification handler code here
-    *pResult = 0;
-}
-
-void CMyButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
-{
-    CDC* dc = GetDC();
-    dc->SetBkColor(m_Color);
 }

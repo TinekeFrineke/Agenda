@@ -13,8 +13,8 @@ public:
   struct Activity
   {
     Activity(const std::tstring & description, bool addtime)
-      : m_Desctiption(description), m_AddTimeToTotal(addtime) {}
-    std::tstring          m_Desctiption;
+      : m_Description(description), m_AddTimeToTotal(addtime) {}
+    std::tstring          m_Description;
     bool                  m_AddTimeToTotal;
   };
 

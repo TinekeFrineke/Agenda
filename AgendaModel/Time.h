@@ -61,6 +61,7 @@ bool              ToTime(const std::tstring &  aTime,
 Time              ToTime(const std::tstring &  aTime,
                          const std::tstring &  aSeparator = _T(":"));
 
+Time operator+(const Time& time1, const Time& time2);
 bool          operator==(const Time & aTime1, const Time & aTime2);
 bool          operator< (const Time & aTime1, const Time & aTime2);
 int           operator -(const Time & aTime1, const Time & aTime2);

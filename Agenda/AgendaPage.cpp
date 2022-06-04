@@ -61,8 +61,8 @@ BOOL AgendaPage::OnInitDialog()
       m_Description.AddString(iter->GetTaskName().c_str());
 
   for (size_t i = 0; i < m_Settings.GetDefaultActivities().size(); ++i)
-    if (m_Description.FindString(0, m_Settings.GetDefaultActivities()[i].m_Desctiption.c_str()) == CB_ERR)
-      m_Description.AddString(m_Settings.GetDefaultActivities()[i].m_Desctiption.c_str());
+    if (m_Description.FindString(0, m_Settings.GetDefaultActivities()[i].m_Description.c_str()) == CB_ERR)
+      m_Description.AddString(m_Settings.GetDefaultActivities()[i].m_Description.c_str());
 
   // Read yesterday's items and add them:
   Path agendapath(m_Settings.GetDataPath() + _T("*.age"));

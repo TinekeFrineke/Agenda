@@ -14,6 +14,7 @@
 #include <Utilities/PathUtils.h>
 
 #include "../AgendaModel/Agenda.h"
+#include "FileLoader.h"
 #include "Settings.h"
 
 
@@ -33,6 +34,10 @@ WorkAndPlayApplication::WorkAndPlayApplication()
 
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
+}
+
+WorkAndPlayApplication::~WorkAndPlayApplication()
+{
 }
 
 
@@ -76,29 +81,29 @@ BOOL WorkAndPlayApplication::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-  TCHAR cpath[MAX_PATH];
-  GetCurrentDirectory(MAX_PATH, cpath);
+	TCHAR cpath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, cpath);
 
-  Path path(cpath);
+	Path path(cpath);
 
-  // Create the current agenda item
-  Agenda::Agenda agenda;
-  Agenda::Date today;
-  std::tstring agendaname(today.String() + _T(".age"));
-  Path agendapath(path + agendaname);
+	// Create the current agenda item
+	Agenda::Agenda agenda;
+	Agenda::Date today;
+	std::tstring agendaname(today.String() + _T(".age"));
+	Path agendapath(path + agendaname);
 
-  // Create the agenda settings item
-  Path settingspath(path + _T("agenda.ini"));
-  Inifile inifile(settingspath.AsString());
-  Settings settings(path);
-  settings.FillFrom(inifile);
-  if (!settings.HasDefaultActivity(_T("Work")))
-	  settings.AddDefaultActivity(_T("Work"), true);
-  if (!settings.HasDefaultActivity(_T("Play")))
-	  settings.AddDefaultActivity(_T("Play"), false);
+	// Create the agenda settings item
+	Path settingspath(path + _T("agenda.ini"));
+	Inifile inifile(settingspath.AsString());
+	Settings settings(path);
+	settings.FillFrom(inifile);
+	if (!settings.HasDefaultActivity(_T("Work")))
+		settings.AddDefaultActivity(_T("Work"), true);
+	if (!settings.HasDefaultActivity(_T("Play")))
+		settings.AddDefaultActivity(_T("Play"), false);
 
-  std::wifstream instream(agendapath.AsString().c_str());
-  instream >> agenda;  
+	std::wifstream instream(agendapath.AsString().c_str());
+	instream >> agenda;  
 
 	WorkAndPlayDialog dlg(agenda, settings);
 	m_pMainWnd = &dlg;

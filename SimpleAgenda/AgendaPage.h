@@ -16,33 +16,24 @@
 
 class Settings;
 
-class CMyButton : public CButton
-{
-public:
-	CMyButton(COLORREF Color) : CButton(), m_Color(Color) {}
-
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
-
-private:
-	const COLORREF m_Color;
-};
-
 class AgendaPage : public CDialog, public TabPage
 {
 	DECLARE_DYNAMIC(AgendaPage)
 
 public:
-	AgendaPage(Agenda::Agenda & agenda, Settings & settings, CWnd* pParent = NULL);   // standard constructor
+	AgendaPage(Agenda::Agenda & agenda,
+			   Settings & settings,
+			   CWnd* pParent = NULL);   // standard constructor
 	virtual ~AgendaPage();
 
-  virtual CDialog *       GetDialog() override { return this; }
+	virtual CDialog *       GetDialog() override { return this; }
 	virtual BOOL            OnInitDialog() override;
-  virtual void            OnCancel() override {}
-  virtual void            OnOK() override {}
+	virtual void            OnCancel() override {}
+	virtual void            OnOK() override {}
 
-  void                    UpdateTimer();
-  void                    UpdateTimer(const Agenda::Time & time);
-  void                    RetrieveTimer(Agenda::Time & time) const;
+	void                    UpdateTimer();
+	void                    UpdateTimer(const Agenda::Time & time);
+	void                    RetrieveTimer(Agenda::Time & time) const;
 
   // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -63,30 +54,29 @@ public:
 	afx_msg void OnDeltaposHourspin(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnDeltaposMinutespin(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnNMCustomdrawWork(NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
-  void                UpdateView();
-  void AddItem(const std::tstring& Item);
+	void UpdateView();
+	void AddItem(const std::tstring& Item);
 
-  Agenda::Agenda &    m_Today;
-  Settings &          m_Settings;
+	static std::vector<Agenda::Date> GetWeek(const Agenda::Date& today);
 
-  CComboBox           m_Description;
-  AgendaItemList      m_Items;
-  CEdit               m_Hour;
-  CEdit               m_Minutes;
+	Agenda::Agenda &    m_Today;
+	Settings &          m_Settings;
 
-  const UINT_PTR      m_TimerID;
-  UINT_PTR            m_Timer;
-  CEdit               m_Totaal;
-  CEdit               m_Week;
+	CComboBox           m_Description;
+	AgendaItemList      m_Items;
+	CEdit               m_Hour;
+	CEdit               m_Minutes;
 
-public:
+	const UINT_PTR      m_TimerID;
+	UINT_PTR            m_Timer;
+	CEdit               m_Totaal;
+	CEdit               m_Week;
+
+	Agenda::Time m_WeekTotals;
+
 	CButton m_WorkButton;
 	CButton m_PlayButton;
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	afx_msg void OnNMCustomdrawPlay(NMHDR* pNMHDR, LRESULT* pResult);
-private:
 };

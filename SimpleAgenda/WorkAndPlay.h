@@ -10,6 +10,9 @@
 
 #include "resource.h"		// main symbols
 
+#include <memory>
+
+class FileLoader;
 
 // AgendaApplication:
 // See Agenda.cpp for the implementation of this class
@@ -19,13 +22,14 @@ class WorkAndPlayApplication : public CWinApp
 {
 public:
 	WorkAndPlayApplication();
+	virtual ~WorkAndPlayApplication() override;
 
 // Overrides
-public:
 	virtual BOOL InitInstance();
 
 // Implementation
 
+private:
 	DECLARE_MESSAGE_MAP()
 };
 

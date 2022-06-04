@@ -1,6 +1,9 @@
 #pragma once
 
+#include <vector>
+
 #include <AgendaModel/IAgendaLoader.h>
+#include <Utilities/strutils.h>
 
 class Path;
 class Settings;
@@ -11,22 +14,24 @@ namespace Agenda
 class Agenda;
 class Date;
 
+}
+
 namespace SettingUtils
 {
 
-class AgendaLoaderFromFile : public IAgendaLoader
+class AgendaLoaderFromFile : public Agenda::IAgendaLoader
 {
 public:
     AgendaLoaderFromFile(const Settings& settings);
 
-    bool LoadAgenda(const Date& date, Agenda& agenda) const override;
+    bool LoadAgenda(const Agenda::Date& date, Agenda::Agenda& agenda) const override;
 
 private:
-    void LoadAgenda(Agenda& agenda, const Path& path) const;
+    void LoadAgenda(Agenda::Agenda& agenda, const Path& path) const;
 
     const Settings& m_Settings;
 };
 
-}
+std::vector<std::tstring> ActvitiesToIgnore(const Settings& settings);
 
 }
