@@ -9,7 +9,9 @@
 
 #include "AgendaPage.h"
 #include "OldFilesPage.h"
+#include "Settings.h"
 #include "TotalsPage.h"
+#include "WorkAndPlayPage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -79,9 +81,25 @@ END_MESSAGE_MAP()
 
 BOOL AgendaDialog::OnInitDialog()
 {
-  m_TabControl.AddPage(new AgendaPage(m_Agenda, m_Settings, this), IDD_AGENDA_PAGE, _T("Vandaag"));
-  m_TabControl.AddPage(new OldFilesPage(m_Settings, this), IDD_OLDFILES_DIALOG, _T("Oud"));
-  m_TabControl.AddPage(new TotalsPage(m_Settings, this), IDD_TOTALS_PAGE, _T("Totalen"));
+	switch (m_Settings.GetType())
+	{
+	case Settings::Type::WorkAndPlay:
+	{
+		m_TabControl.AddPage(new WorkAndPlayPage(m_Agenda, m_Settings, this), IDD_WORK_AND_PLAY_PAGE, _T("Vandaag"));
+		m_TabControl.AddPage(new OldFilesPage(m_Settings, this), IDD_OLDFILES_DIALOG, _T("Oud"));
+		m_TabControl.AddPage(new TotalsPage(m_Settings, this), IDD_TOTALS_PAGE, _T("Totalen"));
+		break;
+	}
+	case Settings::Type::OldAgenda:
+	{
+		m_TabControl.AddPage(new AgendaPage(m_Agenda, m_Settings, this), IDD_AGENDA_PAGE, _T("Vandaag"));
+		m_TabControl.AddPage(new OldFilesPage(m_Settings, this), IDD_OLDFILES_DIALOG, _T("Oud"));
+		m_TabControl.AddPage(new TotalsPage(m_Settings, this), IDD_TOTALS_PAGE, _T("Totalen"));
+		break;
+	}
+	default:
+		throw std::runtime_error("Unknown agenda type");
+	}
 
 	CDialogEx::OnInitDialog();
 

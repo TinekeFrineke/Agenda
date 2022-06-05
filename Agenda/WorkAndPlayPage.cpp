@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "WorkAndPlay.h"
+#include "Agenda.h"
 #include "WorkAndPlayPage.h"
 
 #include <tchar.h>
@@ -20,33 +20,36 @@
 #include "Settings.h"
 #include "SettingUtils.h"
 
-BEGIN_MESSAGE_MAP(AgendaPage, CDialog)
-    ON_BN_CLICKED(IDC_WORK, &AgendaPage::OnBnClickedWork)
-    ON_BN_CLICKED(IDC_PLAY, &AgendaPage::OnBnClickedPlay)
+BEGIN_MESSAGE_MAP(WorkAndPlayPage, CDialog)
+    ON_BN_CLICKED(IDC_WORK, &WorkAndPlayPage::OnBnClickedWork)
+    ON_BN_CLICKED(IDC_PLAY, &WorkAndPlayPage::OnBnClickedPlay)
     ON_WM_TIMER()
     //  ON_WM_CREATE()
-    ON_EN_CHANGE(IDC_HOUR, &AgendaPage::OnEnChangeHour)
-    ON_EN_CHANGE(IDC_MINUTE, &AgendaPage::OnEnChangeMinute)
-    ON_NOTIFY(UDN_DELTAPOS, IDC_HOURSPIN, &AgendaPage::OnDeltaposHourspin)
-    ON_NOTIFY(UDN_DELTAPOS, IDC_MINUTESPIN, &AgendaPage::OnDeltaposMinutespin)
-    ON_NOTIFY(NM_DBLCLK, IDC_ACTIVITYLIST, &AgendaPage::OnNMDblclkActivitylist)
+    ON_EN_CHANGE(IDC_HOUR, &WorkAndPlayPage::OnEnChangeHour)
+    ON_EN_CHANGE(IDC_MINUTE, &WorkAndPlayPage::OnEnChangeMinute)
+    ON_NOTIFY(UDN_DELTAPOS, IDC_HOURSPIN, &WorkAndPlayPage::OnDeltaposHourspin)
+    ON_NOTIFY(UDN_DELTAPOS, IDC_MINUTESPIN, &WorkAndPlayPage::OnDeltaposMinutespin)
+    ON_NOTIFY(NM_DBLCLK, IDC_ACTIVITYLIST, &WorkAndPlayPage::OnNMDblclkActivitylist)
     ON_WM_CREATE()
     ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 // AgendaPage dialog
 
-IMPLEMENT_DYNAMIC(AgendaPage, CDialog)
+IMPLEMENT_DYNAMIC(WorkAndPlayPage, CDialog)
 
-AgendaPage::AgendaPage(Agenda::Agenda & agenda,
-                       Settings& settings,
-                       CWnd* pParent /*=NULL*/)
-:   CDialog   (IDD_AGENDA_PAGE, pParent),
+WorkAndPlayPage::WorkAndPlayPage(Agenda::Agenda & agenda,
+                                 Settings& settings,
+                                 CWnd* pParent /*=NULL*/)
+:   CDialog   (IDD_WORK_AND_PLAY_PAGE, pParent),
     m_Today   (agenda),
     m_Settings(settings),
     m_Items   (agenda),
     m_TimerID (300000)
 {
+    if (!m_Settings.HasDefaultActivity(_T("Play")))
+        m_Settings.AddDefaultActivity(_T("Play"), false);
+
     Utils::Date newdate(Utils::Date::Today());
     Agenda::Date Today(Utils::Date::ToSystemTime(newdate));
     std::vector<Agenda::Date> week(GetWeek(Today));
@@ -62,17 +65,17 @@ AgendaPage::AgendaPage(Agenda::Agenda & agenda,
     }
 }
 
-AgendaPage::~AgendaPage()
+WorkAndPlayPage::~WorkAndPlayPage()
 {
   //KillTimer(m_TimerID);
 }
 
-void AgendaPage::UpdateTimer()
+void WorkAndPlayPage::UpdateTimer()
 {
   UpdateTimer(Agenda::Time::Now());
 }
 
-void AgendaPage::UpdateTimer(const Agenda::Time & time)
+void WorkAndPlayPage::UpdateTimer(const Agenda::Time & time)
     {
     TCHAR text[1024];
     _stprintf_s(text, _T("%0d"), time.GetHour());
@@ -81,7 +84,7 @@ void AgendaPage::UpdateTimer(const Agenda::Time & time)
     m_Minutes.SetWindowText(text);
 }
 
-BOOL AgendaPage::OnInitDialog()
+BOOL WorkAndPlayPage::OnInitDialog()
 {
 	CDialog::OnInitDialog();
   m_Timer = SetTimer(m_TimerID, 1000, NULL);
@@ -119,7 +122,7 @@ BOOL AgendaPage::OnInitDialog()
   return TRUE;
 }
 
-void AgendaPage::RetrieveTimer(Agenda::Time & time) const
+void WorkAndPlayPage::RetrieveTimer(Agenda::Time & time) const
 {
   // TODO: Add your control notification handler code here
   TCHAR text[1024];
@@ -131,7 +134,7 @@ void AgendaPage::RetrieveTimer(Agenda::Time & time) const
   time.Minute(minutes);
 }
 
-void AgendaPage::DoDataExchange(CDataExchange* pDX)
+void WorkAndPlayPage::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_ACTIVITYLIST, m_Items);
@@ -149,17 +152,17 @@ void AgendaPage::DoDataExchange(CDataExchange* pDX)
 
 
 
-void AgendaPage::OnBnClickedWork()
+void WorkAndPlayPage::OnBnClickedWork()
 {
     AddItem(_T("Work"));
 }
 
-void AgendaPage::OnBnClickedPlay()
+void WorkAndPlayPage::OnBnClickedPlay()
 {
     AddItem(_T("Play"));
 }
 
-void AgendaPage::AddItem(const std::tstring& Item)
+void WorkAndPlayPage::AddItem(const std::tstring& Item)
 {
     Agenda::Time time;
 
@@ -181,7 +184,7 @@ void AgendaPage::AddItem(const std::tstring& Item)
     UpdateView();
 }
 
-std::vector<Agenda::Date> AgendaPage::GetWeek(const Agenda::Date& today)
+std::vector<Agenda::Date> WorkAndPlayPage::GetWeek(const Agenda::Date& today)
 {
     std::vector<Agenda::Date> dates;
 
@@ -199,7 +202,7 @@ std::vector<Agenda::Date> AgendaPage::GetWeek(const Agenda::Date& today)
 }
 
 
-void AgendaPage::OnTimer(UINT_PTR nIDEvent)
+void WorkAndPlayPage::OnTimer(UINT_PTR nIDEvent)
 {
   UpdateTimer();
   __super::OnTimer(nIDEvent);
@@ -207,7 +210,7 @@ void AgendaPage::OnTimer(UINT_PTR nIDEvent)
 }
 
 
-void AgendaPage::OnEnChangeHour()
+void WorkAndPlayPage::OnEnChangeHour()
 {
   // When the user edits the time, stretch the update of the time fields
   KillTimer(m_TimerID);
@@ -215,7 +218,7 @@ void AgendaPage::OnEnChangeHour()
 }
 
 
-void AgendaPage::OnEnChangeMinute()
+void WorkAndPlayPage::OnEnChangeMinute()
 {
   // When the user edits the time, stretch the update of the time fields
   KillTimer(m_TimerID);
@@ -223,7 +226,7 @@ void AgendaPage::OnEnChangeMinute()
 }
 
 
-void AgendaPage::OnDeltaposHourspin(NMHDR *pNMHDR, LRESULT *pResult)
+void WorkAndPlayPage::OnDeltaposHourspin(NMHDR *pNMHDR, LRESULT *pResult)
 {
   LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 
@@ -236,7 +239,7 @@ void AgendaPage::OnDeltaposHourspin(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 
-void AgendaPage::OnDeltaposMinutespin(NMHDR *pNMHDR, LRESULT *pResult)
+void WorkAndPlayPage::OnDeltaposMinutespin(NMHDR *pNMHDR, LRESULT *pResult)
 {
   LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 
@@ -248,7 +251,7 @@ void AgendaPage::OnDeltaposMinutespin(NMHDR *pNMHDR, LRESULT *pResult)
   *pResult = 0;
 }
 
-void AgendaPage::UpdateView()
+void WorkAndPlayPage::UpdateView()
 {
   m_Items.View(m_Today);
   Agenda::Time totalTime = Agenda::GetWorkedTime(m_Today, SettingUtils::ActvitiesToIgnore(m_Settings));
@@ -270,7 +273,7 @@ void AgendaPage::UpdateView()
 }
 
 
-void AgendaPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
+void WorkAndPlayPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
 {
   LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
   if (pNMItemActivate->iItem == -1) {
@@ -300,7 +303,7 @@ void AgendaPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
   *pResult = 0;
 }
 
-int AgendaPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int WorkAndPlayPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
     if (__super::OnCreate(lpCreateStruct) == -1)
         return -1;

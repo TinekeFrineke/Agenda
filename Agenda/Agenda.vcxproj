@@ -197,13 +197,16 @@
     <ClInclude Include="AgendaTotalsList.h" />
     <ClInclude Include="EditAgendaDialog.h" />
     <ClInclude Include="EditItemDialog.h" />
+    <ClInclude Include="FileLoader.h" />
     <ClInclude Include="OldAgendaList.h" />
     <ClInclude Include="OldFilesPage.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="SettingUtils.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TotalsPage.h" />
+    <ClInclude Include="WorkAndPlayPage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agenda.cpp" />
@@ -214,9 +217,11 @@
     <ClCompile Include="AgendaTotalsList.cpp" />
     <ClCompile Include="EditAgendaDialog.cpp" />
     <ClCompile Include="EditItemDialog.cpp" />
+    <ClCompile Include="FileLoader.cpp" />
     <ClCompile Include="OldAgendaList.cpp" />
     <ClCompile Include="OldFilesPage.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="SettingUtils.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -224,6 +229,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TotalsPage.cpp" />
+    <ClCompile Include="WorkAndPlayPage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Agenda.rc" />

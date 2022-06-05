@@ -2,6 +2,7 @@
 
 #include <CustomControls/TabPage.h>
 
+#include "resource.h"
 #include "../AgendaModel/Agenda.h"
 #include "afxwin.h"
 #include "afxcmn.h"
@@ -16,15 +17,15 @@
 
 class Settings;
 
-class AgendaPage : public CDialog, public TabPage
+class WorkAndPlayPage : public CDialog, public TabPage
 {
-	DECLARE_DYNAMIC(AgendaPage)
+	DECLARE_DYNAMIC(WorkAndPlayPage)
 
 public:
-	AgendaPage(Agenda::Agenda & agenda,
+	WorkAndPlayPage(Agenda::Agenda & agenda,
 			   Settings & settings,
 			   CWnd* pParent = NULL);   // standard constructor
-	virtual ~AgendaPage();
+	virtual ~WorkAndPlayPage();
 
 	virtual CDialog *       GetDialog() override { return this; }
 	virtual BOOL            OnInitDialog() override;
@@ -37,7 +38,7 @@ public:
 
   // Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_AGENDA_PAGE };
+	enum { IDD = IDD_WORK_AND_PLAY_PAGE };
 #endif
 
 protected:

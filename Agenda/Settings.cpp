@@ -5,8 +5,14 @@
 #include "Settings.h"
 
 Settings::Settings(const Path & path)
-: m_DataPath(path)
+    : m_DataPath(path)
+    , m_AgendaType(Type::WorkAndPlay)
 {
+}
+
+void Settings::AddDefaultActivity(const std::tstring& rName, bool KeepScore)
+{
+    m_DefaultActivities.push_back(Activity(rName, KeepScore));
 }
 
 void Settings::FillFrom(const Inifile & inifile)
@@ -23,8 +29,11 @@ void Settings::FillFrom(const Inifile & inifile)
     _stprintf_s(number, _T("%u"), i);
     stream.str(inifile[_T("Items")][number]);
     if (number[0] != 0) {
-      m_DefaultActivities.push_back(Activity(stream.str().substr(0, stream.str().find(_T(';'))),
-                                             stream.str()[stream.str().length() - 1] == _T('0') ? false : true));
+        size_t pos = stream.str().find(_T(';'));
+        if (pos != std::string::npos && pos > 0) {
+            AddDefaultActivity(stream.str().substr(0, pos),
+                               stream.str()[stream.str().length() - 1] == _T('0') ? false : true);
+        }
     }
   }
 }
