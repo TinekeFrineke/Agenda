@@ -193,6 +193,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileLoader.h" />
     <ClInclude Include="SettingUtils.h" />
     <ClInclude Include="WorkAndPlay.h" />
     <ClInclude Include="AgendaFileListBox.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="WorkAndPlayDialog.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileLoader.cpp" />
     <ClCompile Include="SettingUtils.cpp" />
     <ClCompile Include="WorkAndPlay.cpp" />
     <ClCompile Include="AgendaFileListBox.cpp" />
