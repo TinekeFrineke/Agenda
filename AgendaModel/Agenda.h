@@ -68,9 +68,8 @@ bool              operator==(const Item & anItem1, const Item & anItem2);
 class Agenda
 {
 public:
-  typedef std::list<Item>   ItemList;
-  typedef std::map<std::tstring, Time>
-                            ItemTimeMap;
+  typedef std::list<Item> ItemList;
+  typedef std::map<std::tstring, Time> ItemTimeMap;
 
                             Agenda();
 
