@@ -16,12 +16,25 @@
 #include "EditItemDialog.h"
 #include "Settings.h"
 
+BEGIN_MESSAGE_MAP(AgendaPage, CDialog)
+  ON_BN_CLICKED(IDC_ADD, &AgendaPage::OnBnClickedAdd)
+  ON_WM_TIMER()
+//  ON_WM_CREATE()
+  ON_EN_CHANGE(IDC_HOUR, &AgendaPage::OnEnChangeHour)
+  ON_EN_CHANGE(IDC_MINUTE, &AgendaPage::OnEnChangeMinute)
+  ON_NOTIFY(UDN_DELTAPOS, IDC_HOURSPIN, &AgendaPage::OnDeltaposHourspin)
+  ON_NOTIFY(UDN_DELTAPOS, IDC_MINUTESPIN, &AgendaPage::OnDeltaposMinutespin)
+  ON_NOTIFY(NM_DBLCLK, IDC_ACTIVITYLIST, &AgendaPage::OnNMDblclkActivitylist)
+END_MESSAGE_MAP()
+
 
 // AgendaPage dialog
 
 IMPLEMENT_DYNAMIC(AgendaPage, CDialog)
 
-AgendaPage::AgendaPage(Agenda::Agenda & agenda, Settings & settings, CWnd* pParent /*=NULL*/)
+AgendaPage::AgendaPage(Agenda::Agenda & agenda,
+                       Settings& settings,
+                       CWnd* pParent /*=NULL*/)
 : CDialog   (IDD_AGENDA_PAGE, pParent),
   m_Today   (agenda),
   m_Settings(settings),
@@ -135,17 +148,6 @@ void AgendaPage::DoDataExchange(CDataExchange* pDX)
   DDX_Control(pDX, IDC_TOTAAL, m_Totaal);
 }
 
-
-BEGIN_MESSAGE_MAP(AgendaPage, CDialog)
-  ON_BN_CLICKED(IDC_ADD, &AgendaPage::OnBnClickedAdd)
-  ON_WM_TIMER()
-//  ON_WM_CREATE()
-  ON_EN_CHANGE(IDC_HOUR, &AgendaPage::OnEnChangeHour)
-  ON_EN_CHANGE(IDC_MINUTE, &AgendaPage::OnEnChangeMinute)
-  ON_NOTIFY(UDN_DELTAPOS, IDC_HOURSPIN, &AgendaPage::OnDeltaposHourspin)
-  ON_NOTIFY(UDN_DELTAPOS, IDC_MINUTESPIN, &AgendaPage::OnDeltaposMinutespin)
-  ON_NOTIFY(NM_DBLCLK, IDC_ACTIVITYLIST, &AgendaPage::OnNMDblclkActivitylist)
-END_MESSAGE_MAP()
 
 
 // AgendaPage message handlers

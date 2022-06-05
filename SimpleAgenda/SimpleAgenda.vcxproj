@@ -198,7 +198,7 @@
     <ClInclude Include="WorkAndPlay.h" />
     <ClInclude Include="AgendaFileListBox.h" />
     <ClInclude Include="AgendaItemList.h" />
-    <ClInclude Include="AgendaPage.h" />
+    <ClInclude Include="WorkAndPlayPage.h" />
     <ClInclude Include="AgendaTotalsList.h" />
     <ClInclude Include="EditAgendaDialog.h" />
     <ClInclude Include="EditItemDialog.h" />
@@ -216,7 +216,7 @@
     <ClCompile Include="WorkAndPlay.cpp" />
     <ClCompile Include="AgendaFileListBox.cpp" />
     <ClCompile Include="AgendaItemList.cpp" />
-    <ClCompile Include="AgendaPage.cpp" />
+    <ClCompile Include="WorkAndPlayPage.cpp" />
     <ClCompile Include="AgendaTotalsList.cpp" />
     <ClCompile Include="EditAgendaDialog.cpp" />
     <ClCompile Include="EditItemDialog.cpp" />

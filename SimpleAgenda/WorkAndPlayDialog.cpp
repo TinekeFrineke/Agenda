@@ -7,7 +7,7 @@
 #include "WorkAndPlayDialog.h"
 #include "afxdialogex.h"
 
-#include "AgendaPage.h"
+#include "WorkAndPlayPage.h"
 #include "OldFilesPage.h"
 
 #ifdef _DEBUG

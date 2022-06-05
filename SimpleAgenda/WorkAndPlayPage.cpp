@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #include "WorkAndPlay.h"
-#include "AgendaPage.h"
+#include "WorkAndPlayPage.h"
 
 #include <tchar.h>
 
