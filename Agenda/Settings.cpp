@@ -4,6 +4,35 @@
 
 #include "Settings.h"
 
+namespace
+{
+
+const std::tstring cWorkAndPlay(_T("WorkAndPlay"));
+const std::tstring cOldAgenda(_T("OldAgenda"));
+
+Settings::Type ToType(const std::tstring& aName)
+{
+    if (aName == cOldAgenda)
+        return Settings::Type::OldAgenda;
+
+    return Settings::Type::WorkAndPlay;
+}
+
+std::tstring ToString(Settings::Type aType)
+{
+    switch (aType)
+    {
+        case Settings::Type::OldAgenda:
+            return cOldAgenda;
+        case Settings::Type::WorkAndPlay:
+            return cWorkAndPlay;
+        default:
+            throw std::runtime_error("Wrong settings type");
+    }
+}
+
+}
+
 Settings::Settings(const Path & path)
     : m_DataPath(path)
     , m_AgendaType(Type::WorkAndPlay)
@@ -22,6 +51,8 @@ void Settings::FillFrom(const Inifile & inifile)
 
   stream.str(inifile[_T("General")][_T("EndDate")]);
   stream >> m_DefaultEndDate;
+
+  m_AgendaType = ToType(inifile[_T("General")][_T("Type")]);
 
   unsigned int count(_ttoi(inifile[_T("Items")][_T("Count")].c_str()));
   for (unsigned int i = 0; i < count; ++i) {
@@ -42,6 +73,8 @@ void Settings::WriteTo(Inifile & inifile)
 {
   inifile[_T("General")][_T("StartDate")] = m_DefaultStartDate.String();
   inifile[_T("General")][_T("EndDate")]   = m_DefaultEndDate.String();
+  inifile[_T("General")][_T("Type")] = ToString(m_AgendaType);
+
 
   TCHAR number[10];
   _stprintf_s(number, _T("%zu"), m_DefaultActivities.size());
