@@ -12,11 +12,11 @@ class FileLoader
 public:
     FileLoader(const Settings& settings);
 
-    virtual bool LoadAgenda(const Agenda::Date& date,
-                            Agenda::Agenda& agenda) const override;
+    virtual bool Load(const Agenda::Date& date,
+                      Agenda::Agenda& agenda) const override;
 
 private:
-    bool LoadAgenda(Agenda::Agenda& agenda, const Path& path) const;
+    bool Load(Agenda::Agenda& agenda, const Path& path) const;
 
     const Settings& m_Settings;
 };

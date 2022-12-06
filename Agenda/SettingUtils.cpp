@@ -14,15 +14,15 @@ AgendaLoaderFromFile::AgendaLoaderFromFile(const Settings& settings)
 {
 }
 
-bool AgendaLoaderFromFile::LoadAgenda(const Agenda::Date& date, Agenda::Agenda& agenda) const
+bool AgendaLoaderFromFile::Load(const Agenda::Date& date, Agenda::Agenda& agenda) const
 {
     Path path(m_Settings.GetDataPath());
     path += date.String() + _T(".age");
-    LoadAgenda(agenda, path);
+    Load(agenda, path);
     return !agenda.Empty();
 }
 
-void AgendaLoaderFromFile::LoadAgenda(Agenda::Agenda& agenda, const Path& path) const
+void AgendaLoaderFromFile::Load(Agenda::Agenda& agenda, const Path& path) const
 {
     agenda.Clear();
     std::tifstream stream(path.AsString().c_str());

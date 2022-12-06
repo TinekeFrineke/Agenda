@@ -12,7 +12,7 @@ class Date;
 class IAgendaLoader
 {
 public:
-    virtual bool LoadAgenda(const Date& date, Agenda& agenda) const = 0;
+    virtual bool Load(const Date& date, Agenda& agenda) const = 0;
 };
 
 class WeekLoader

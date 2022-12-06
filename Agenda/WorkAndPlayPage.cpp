@@ -15,6 +15,7 @@
 #include "AgendaModel/AgendaUtilities.h"
 
 #include "afxdialogex.h"
+#include "AgendaSaver.h"
 #include "EditItemDialog.h"
 #include "FileLoader.h"
 #include "Settings.h"
@@ -60,7 +61,7 @@ WorkAndPlayPage::WorkAndPlayPage(Agenda::Agenda & agenda,
     for (const auto& date : week)
     {
         Agenda::Agenda oldagenda;
-        loader.LoadAgenda(date, oldagenda);
+        loader.Load(date, oldagenda);
         m_WeekTotals += Agenda::GetWorkedTime(oldagenda, toIgnore);
     }
 }
@@ -155,11 +156,13 @@ void WorkAndPlayPage::DoDataExchange(CDataExchange* pDX)
 void WorkAndPlayPage::OnBnClickedWork()
 {
     AddItem(_T("Work"));
+    WriteAgenda();
 }
 
 void WorkAndPlayPage::OnBnClickedPlay()
 {
     AddItem(_T("Play"));
+    WriteAgenda();
 }
 
 void WorkAndPlayPage::AddItem(const std::tstring& Item)
@@ -182,6 +185,18 @@ void WorkAndPlayPage::AddItem(const std::tstring& Item)
     m_Today.Add(Agenda::Item(stime, Item), true);
 
     UpdateView();
+}
+
+void WorkAndPlayPage::WriteAgenda()
+{
+    AgendaSaver Saver(m_Settings);
+    Utils::Date newdate(Utils::Date::Today());
+    Agenda::Date Today(Utils::Date::ToSystemTime(newdate));
+
+    if (!Saver.Save(Today, m_Today))
+    {
+        MessageBox(_T("Could not save agenda"), _T("ERROR WRITING AGENDA"), MB_OK);
+    }
 }
 
 std::vector<Agenda::Date> WorkAndPlayPage::GetWeek(const Agenda::Date& today)
@@ -298,6 +313,7 @@ void WorkAndPlayPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 
   UpdateView();
+  WriteAgenda();
 
   // TODO: Add your control notification handler code here
   *pResult = 0;

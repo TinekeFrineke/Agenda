@@ -24,10 +24,10 @@ class AgendaLoaderFromFile : public Agenda::IAgendaLoader
 public:
     AgendaLoaderFromFile(const Settings& settings);
 
-    bool LoadAgenda(const Agenda::Date& date, Agenda::Agenda& agenda) const override;
+    bool Load(const Agenda::Date& date, Agenda::Agenda& agenda) const override;
 
 private:
-    void LoadAgenda(Agenda::Agenda& agenda, const Path& path) const;
+    void Load(Agenda::Agenda& agenda, const Path& path) const;
 
     const Settings& m_Settings;
 };

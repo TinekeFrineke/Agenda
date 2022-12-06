@@ -15,6 +15,7 @@
 
 #include "../AgendaModel/Agenda.h"
 #include "Settings.h"
+#include <Agenda/Logger.h>
 
 
 // AgendaApplication
@@ -80,6 +81,8 @@ BOOL AgendaApplication::InitInstance()
 	GetCurrentDirectory(MAX_PATH, cpath);
 
 	Path path(cpath);
+	Path logpath(path + _T("WorkAndPlay.log"));
+	Logger::CreateInstance(Str::ToString(*logpath));
 
 	// Create the current agenda item
 	Agenda::Agenda agenda;
@@ -133,7 +136,9 @@ BOOL AgendaApplication::InitInstance()
     outstream << agenda;  
   }
 
-	// Since the dialog has been closed, return FALSE so that we exit the
+  Logger::DeleteInstance();
+
+  // Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
 	return FALSE;
 }

@@ -23,8 +23,8 @@ class WorkAndPlayPage : public CDialog, public TabPage
 
 public:
 	WorkAndPlayPage(Agenda::Agenda & agenda,
-			   Settings & settings,
-			   CWnd* pParent = NULL);   // standard constructor
+				    Settings & settings,
+				    CWnd* pParent = NULL);   // standard constructor
 	virtual ~WorkAndPlayPage();
 
 	virtual CDialog *       GetDialog() override { return this; }
@@ -59,6 +59,7 @@ public:
 private:
 	void UpdateView();
 	void AddItem(const std::tstring& Item);
+	void WriteAgenda();
 
 	static std::vector<Agenda::Date> GetWeek(const Agenda::Date& today);
 
