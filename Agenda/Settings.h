@@ -10,7 +10,7 @@ class Path;
 class Settings
 {
 public:
-    enum class Type { WorkAndPlay, OldAgenda };
+    enum class Type { WorkAndPlay, OldAgenda, Combined,  Both };
     struct Activity
     {
         Activity(const std::tstring & description, bool addtime)

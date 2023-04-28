@@ -108,6 +108,10 @@ private:
 
 } // namespace Agenda
 
+inline bool operator==(const Agenda::Date& lhs, const Agenda::Date& rhs)
+{
+    return lhs.String() == rhs.String();
+}
 
 std::tistream & operator>>(std::tistream & aStream, Agenda::Date & anItem);
 std::tostream & operator<<(std::tostream & aStream, const Agenda::Date & anItem);

@@ -10,23 +10,23 @@
 
 #include "AgendaItemList.h"
 
-// AgendaPage dialog
+// CombinedPage dialog
 
-// The page upxdates the time from time to time:
+// The page updates the time from time to time:
 // Normally every second, but if the user has typed anything anywhere, or if he has
 // selected an item from the combobox, a one minute delay takes effect.
 
 class Settings;
 
-class WorkAndPlayPage : public CDialog, public TabPage
+class CombinedPage : public CDialogEx, public TabPage
 {
-	DECLARE_DYNAMIC(WorkAndPlayPage)
+	DECLARE_DYNAMIC(CombinedPage)
 
 public:
-	WorkAndPlayPage(Agenda::Agenda & agenda,
-				    Settings & settings,
-				    CWnd* pParent = NULL);   // standard constructor
-	virtual ~WorkAndPlayPage();
+	CombinedPage(Agenda::Agenda & agenda,
+			     Settings & settings,
+				 CWnd* pParent = NULL);   // standard constructor
+	virtual ~CombinedPage();
 
 	virtual CDialog *       GetDialog() override { return this; }
 	virtual BOOL            OnInitDialog() override;
@@ -37,11 +37,12 @@ public:
 	void                    UpdateTime(const Agenda::Time & time);
 	void                    RetrieveTime(Agenda::Time & time) const;
 
-  // Dialog Data
+// Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_WORK_AND_PLAY_PAGE };
+	enum { IDD = IDD_COMBINED_PAGE };
 #endif
 
+	afx_msg void OnBnClickedAdd();
 	afx_msg void OnBnClickedWork();
 	afx_msg void OnBnClickedPlay();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
@@ -75,6 +76,7 @@ private:
 	AgendaItemList      m_Items;
 	CEdit               m_Hour;
 	CEdit               m_Minutes;
+	CButton m_Now;
 
 	const UINT_PTR      m_TimerID;
 	UINT_PTR            m_Timer;

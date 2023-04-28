@@ -64,6 +64,6 @@ private:
   CEdit               m_Minutes;
 
   const UINT_PTR      m_TimerID;
-  UINT_PTR            m_Timer;
+  UINT_PTR            m_Timer{};
   CEdit               m_Totaal;
 };

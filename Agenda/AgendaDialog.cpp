@@ -8,6 +8,7 @@
 #include "afxdialogex.h"
 
 #include "AgendaPage.h"
+#include "CombinedPage.h"
 #include "OldFilesPage.h"
 #include "Settings.h"
 #include "TotalsPage.h"
@@ -97,6 +98,22 @@ BOOL AgendaDialog::OnInitDialog()
 		m_TabControl.AddPage(new TotalsPage(m_Settings, this), IDD_TOTALS_PAGE, _T("Totalen"));
 		break;
 	}
+	case Settings::Type::Combined:
+	{
+		m_TabControl.AddPage(new CombinedPage(m_Agenda, m_Settings, this), IDD_COMBINED_PAGE, _T("Combined"));
+		m_TabControl.AddPage(new OldFilesPage(m_Settings, this), IDD_OLDFILES_DIALOG, _T("Oud"));
+		m_TabControl.AddPage(new TotalsPage(m_Settings, this), IDD_TOTALS_PAGE, _T("Totalen"));
+		break;
+	}
+	case Settings::Type::Both:
+	{
+		m_TabControl.AddPage(new WorkAndPlayPage(m_Agenda, m_Settings, this), IDD_WORK_AND_PLAY_PAGE, _T("WorkAndPlay"));
+		m_TabControl.AddPage(new AgendaPage(m_Agenda, m_Settings, this), IDD_AGENDA_PAGE, _T("Agenda"));
+		m_TabControl.AddPage(new OldFilesPage(m_Settings, this), IDD_OLDFILES_DIALOG, _T("Oud"));
+		m_TabControl.AddPage(new TotalsPage(m_Settings, this), IDD_TOTALS_PAGE, _T("Totalen"));
+		break;
+	}
+
 	default:
 		throw std::runtime_error("Unknown agenda type");
 	}
@@ -129,7 +146,7 @@ BOOL AgendaDialog::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	m_TabControl.Initialize();
-  m_TabControl.SelectPage(0);
+	m_TabControl.SelectPage(0);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

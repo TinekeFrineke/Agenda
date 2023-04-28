@@ -1,10 +1,10 @@
-// AgendaPage.cpp : implementation file
+// CombinedPage.cpp : implementation file
 //
 
 #include "stdafx.h"
 
 #include "Agenda.h"
-#include "WorkAndPlayPage.h"
+#include "CombinedPage.h"
 
 #include <tchar.h>
 
@@ -13,7 +13,6 @@
 #include <Utilities/Date.h>
 #include <Utilities/DateUtils.h>
 
-
 #include "afxdialogex.h"
 #include "AgendaSaver.h"
 #include "EditItemDialog.h"
@@ -21,31 +20,33 @@
 #include "Settings.h"
 #include "SettingUtils.h"
 
-BEGIN_MESSAGE_MAP(WorkAndPlayPage, CDialog)
-    ON_BN_CLICKED(IDC_WORK, &WorkAndPlayPage::OnBnClickedWork)
-    ON_BN_CLICKED(IDC_PLAY, &WorkAndPlayPage::OnBnClickedPlay)
+BEGIN_MESSAGE_MAP(CombinedPage, CDialogEx)
+    ON_BN_CLICKED(IDC_WORK, &CombinedPage::OnBnClickedWork)
+    ON_BN_CLICKED(IDC_PLAY, &CombinedPage::OnBnClickedPlay)
+    ON_BN_CLICKED(IDC_ADD, &CombinedPage::OnBnClickedAdd)
     ON_WM_TIMER()
     //  ON_WM_CREATE()
-    ON_EN_CHANGE(IDC_HOUR, &WorkAndPlayPage::OnEnChangeHour)
-    ON_EN_CHANGE(IDC_MINUTE, &WorkAndPlayPage::OnEnChangeMinute)
-    ON_NOTIFY(UDN_DELTAPOS, IDC_HOURSPIN, &WorkAndPlayPage::OnDeltaposHourspin)
-    ON_NOTIFY(UDN_DELTAPOS, IDC_MINUTESPIN, &WorkAndPlayPage::OnDeltaposMinutespin)
-    ON_NOTIFY(NM_DBLCLK, IDC_ACTIVITYLIST, &WorkAndPlayPage::OnNMDblclkActivitylist)
+    ON_EN_CHANGE(IDC_HOUR, &CombinedPage::OnEnChangeHour)
+    ON_EN_CHANGE(IDC_MINUTE, &CombinedPage::OnEnChangeMinute)
+    ON_NOTIFY(UDN_DELTAPOS, IDC_HOURSPIN, &CombinedPage::OnDeltaposHourspin)
+    ON_NOTIFY(UDN_DELTAPOS, IDC_MINUTESPIN, &CombinedPage::OnDeltaposMinutespin)
+    ON_NOTIFY(NM_DBLCLK, IDC_ACTIVITYLIST, &CombinedPage::OnNMDblclkActivitylist)
     ON_WM_CREATE()
     ON_WM_SHOWWINDOW()
-    ON_EN_SETFOCUS(IDC_HOUR, &WorkAndPlayPage::OnEnSetfocusHour)
-    ON_BN_CLICKED(IDC_NOW, &WorkAndPlayPage::OnBnClickedNow)
-    ON_EN_SETFOCUS(IDC_MINUTE, &WorkAndPlayPage::OnEnSetfocusMinute)
+    ON_EN_SETFOCUS(IDC_HOUR, &CombinedPage::OnEnSetfocusHour)
+//    ON_EN_KILLFOCUS(IDC_MINUTE, &CombinedPage::OnEnKillfocusMinute)
+    ON_BN_CLICKED(IDC_NOW, &CombinedPage::OnBnClickedNow)
+    ON_EN_SETFOCUS(IDC_MINUTE, &CombinedPage::OnEnSetfocusMinute)
 END_MESSAGE_MAP()
 
-// AgendaPage dialog
+// CombinedPage dialog
 
-IMPLEMENT_DYNAMIC(WorkAndPlayPage, CDialog)
+IMPLEMENT_DYNAMIC(CombinedPage, CDialogEx)
 
-WorkAndPlayPage::WorkAndPlayPage(Agenda::Agenda & agenda,
-                                 Settings& settings,
-                                 CWnd* pParent /*=NULL*/)
-:   CDialog   (IDD_WORK_AND_PLAY_PAGE, pParent),
+CombinedPage::CombinedPage(Agenda::Agenda & agenda,
+                           Settings& settings,
+                           CWnd* pParent /*=NULL*/)
+:   CDialogEx (IDD_COMBINED_PAGE, pParent),
     m_Today   (agenda),
     m_Settings(settings),
     m_Items   (agenda),
@@ -72,18 +73,18 @@ WorkAndPlayPage::WorkAndPlayPage(Agenda::Agenda & agenda,
     }
 }
 
-WorkAndPlayPage::~WorkAndPlayPage()
+CombinedPage::~CombinedPage()
 {
   //KillTimer(m_TimerID);
 }
 
-void WorkAndPlayPage::UpdateTime()
+void CombinedPage::UpdateTime()
 {
   UpdateTime(Agenda::Time::Now());
 }
 
-void WorkAndPlayPage::UpdateTime(const Agenda::Time & time)
-    {
+void CombinedPage::UpdateTime(const Agenda::Time & time)
+{
     TCHAR text[1024];
     _stprintf_s(text, _T("%0d"), time.GetHour());
     m_Hour.SetWindowText(text);
@@ -91,11 +92,20 @@ void WorkAndPlayPage::UpdateTime(const Agenda::Time & time)
     m_Minutes.SetWindowText(text);
 }
 
-BOOL WorkAndPlayPage::OnInitDialog()
+BOOL CombinedPage::OnInitDialog()
 {
   CDialog::OnInitDialog();
   m_Timer = SetTimer(m_TimerID, 1000, NULL);
   UpdateTime();
+
+  // Fill the activities list:
+  for (Agenda::Agenda::ItemList::iterator iter = m_Today.Begin(); iter != m_Today.End(); ++iter)
+    if (m_Description.FindString(0, iter->GetTaskName().c_str()) == CB_ERR)
+      m_Description.AddString(iter->GetTaskName().c_str());
+
+  for (size_t i = 0; i < m_Settings.GetDefaultActivities().size(); ++i)
+    if (m_Description.FindString(0, m_Settings.GetDefaultActivities()[i].m_Description.c_str()) == CB_ERR)
+      m_Description.AddString(m_Settings.GetDefaultActivities()[i].m_Description.c_str());
 
   // Read yesterday's items and add them:
   Path agendapath(m_Settings.GetDataPath() + _T("*.age"));
@@ -120,6 +130,23 @@ BOOL WorkAndPlayPage::OnInitDialog()
     }
   }
 
+  Agenda::Agenda yesterday;
+
+  if (!yesterdayfile.empty()) {
+    Path yesterdaypath(m_Settings.GetDataPath() + yesterdayfile);
+    // Create the current agenda item
+    m_Settings.LoadAgenda(yesterday, yesterdaypath);
+
+    for (Agenda::Agenda::ItemList::iterator iter = yesterday.Begin(); iter != yesterday.End(); ++iter)
+      if (m_Description.FindString(0, iter->GetTaskName().c_str()) == CB_ERR)
+        m_Description.AddString(iter->GetTaskName().c_str());
+  }
+
+  if (!m_Today.Empty())
+    m_Description.SelectString(0, m_Today.Begin()->GetTaskName().c_str());
+  else if (!yesterday.Empty())
+    m_Description.SelectString(0, yesterday.Begin()->GetTaskName().c_str());
+
   m_Items.Initialize();
   m_Items.SetSelectionMark(0);
   m_Items.ShowWindow(SW_SHOW);
@@ -129,9 +156,8 @@ BOOL WorkAndPlayPage::OnInitDialog()
   return TRUE;
 }
 
-void WorkAndPlayPage::RetrieveTime(Agenda::Time & time) const
+void CombinedPage::RetrieveTime(Agenda::Time & time) const
 {
-  // TODO: Add your control notification handler code here
   TCHAR text[1024];
   m_Hour.GetWindowText(text, 1024);
   int hours(_ttoi(text));
@@ -141,9 +167,10 @@ void WorkAndPlayPage::RetrieveTime(Agenda::Time & time) const
   time.Minute(minutes);
 }
 
-void WorkAndPlayPage::DoDataExchange(CDataExchange* pDX)
+void CombinedPage::DoDataExchange(CDataExchange* pDX)
 {
-    CDialog::DoDataExchange(pDX);
+    CDialogEx::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_ITEM_NAMES, m_Description);
     DDX_Control(pDX, IDC_ACTIVITYLIST, m_Items);
     DDX_Control(pDX, IDC_HOUR, m_Hour);
     DDX_Control(pDX, IDC_MINUTE, m_Minutes);
@@ -151,27 +178,33 @@ void WorkAndPlayPage::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_WORK, m_WorkButton);
     DDX_Control(pDX, IDC_PLAY, m_PlayButton);
     DDX_Control(pDX, IDC_WEEK, m_Week);
+    DDX_Control(pDX, IDC_NOW, m_Now);
 }
 
 
 
-// AgendaPage message handlers
+// CombinedPage message handlers
+void CombinedPage::OnBnClickedAdd()
+{
+    TCHAR text[1024];
+    m_Description.GetWindowText(text, 1024);
 
+    AddItem(text);
+}
 
-
-void WorkAndPlayPage::OnBnClickedWork()
+void CombinedPage::OnBnClickedWork()
 {
     AddItem(_T("Work"));
     WriteAgenda();
 }
 
-void WorkAndPlayPage::OnBnClickedPlay()
+void CombinedPage::OnBnClickedPlay()
 {
     AddItem(_T("Play"));
     WriteAgenda();
 }
 
-void WorkAndPlayPage::AddItem(const std::tstring& Item)
+void CombinedPage::AddItem(const std::tstring& Item)
 {
     Agenda::Time time;
 
@@ -189,11 +222,15 @@ void WorkAndPlayPage::AddItem(const std::tstring& Item)
     stime.wMinute = static_cast<unsigned short>(time.GetMinute());
 
     m_Today.Add(Agenda::Item(stime, Item), true);
+    if (m_Description.FindString(0, Item.c_str()) == CB_ERR)
+      m_Description.InsertString(0, Item.c_str());
 
+    m_Description.SelectString(0, Item.c_str());
+  
     UpdateView();
 }
 
-void WorkAndPlayPage::WriteAgenda()
+void CombinedPage::WriteAgenda()
 {
     AgendaSaver Saver(m_Settings);
     Utils::Date newdate(Utils::Date::Today());
@@ -205,14 +242,14 @@ void WorkAndPlayPage::WriteAgenda()
     }
 }
 
-void WorkAndPlayPage::StallAutomaticUpdate()
+void CombinedPage::StallAutomaticUpdate()
 {
     // When the user edits the time, stretch the update of the time fields
     KillTimer(m_TimerID);
     m_Timer = SetTimer(m_TimerID, 60000, NULL);
 }
 
-std::vector<Agenda::Date> WorkAndPlayPage::GetWeek(const Agenda::Date& today)
+std::vector<Agenda::Date> CombinedPage::GetWeek(const Agenda::Date& today)
 {
     std::vector<Agenda::Date> dates;
 
@@ -230,7 +267,7 @@ std::vector<Agenda::Date> WorkAndPlayPage::GetWeek(const Agenda::Date& today)
 }
 
 
-void WorkAndPlayPage::OnTimer(UINT_PTR nIDEvent)
+void CombinedPage::OnTimer(UINT_PTR nIDEvent)
 {
   UpdateTime();
   __super::OnTimer(nIDEvent);
@@ -238,21 +275,21 @@ void WorkAndPlayPage::OnTimer(UINT_PTR nIDEvent)
 }
 
 
-void WorkAndPlayPage::OnEnChangeHour()
+void CombinedPage::OnEnChangeHour()
 {
   // When the user edits the time, stretch the update of the time fields
   StallAutomaticUpdate();
 }
 
 
-void WorkAndPlayPage::OnEnChangeMinute()
+void CombinedPage::OnEnChangeMinute()
 {
   // When the user edits the time, stretch the update of the time fields
   StallAutomaticUpdate();
 }
 
 
-void WorkAndPlayPage::OnDeltaposHourspin(NMHDR *pNMHDR, LRESULT *pResult)
+void CombinedPage::OnDeltaposHourspin(NMHDR *pNMHDR, LRESULT *pResult)
 {
   LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 
@@ -265,7 +302,7 @@ void WorkAndPlayPage::OnDeltaposHourspin(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 
-void WorkAndPlayPage::OnDeltaposMinutespin(NMHDR *pNMHDR, LRESULT *pResult)
+void CombinedPage::OnDeltaposMinutespin(NMHDR *pNMHDR, LRESULT *pResult)
 {
   LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 
@@ -277,7 +314,7 @@ void WorkAndPlayPage::OnDeltaposMinutespin(NMHDR *pNMHDR, LRESULT *pResult)
   *pResult = 0;
 }
 
-void WorkAndPlayPage::UpdateView()
+void CombinedPage::UpdateView()
 {
   m_Items.View(m_Today);
   Agenda::Time totalTime = Agenda::GetWorkedTime(m_Today, SettingUtils::ActvitiesToIgnore(m_Settings));
@@ -300,7 +337,7 @@ void WorkAndPlayPage::UpdateView()
 }
 
 
-void WorkAndPlayPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
+void CombinedPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
 {
   LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
   if (pNMItemActivate->iItem == -1) {
@@ -331,7 +368,7 @@ void WorkAndPlayPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
   *pResult = 0;
 }
 
-int WorkAndPlayPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CombinedPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
     if (__super::OnCreate(lpCreateStruct) == -1)
         return -1;
@@ -342,19 +379,19 @@ int WorkAndPlayPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 }
 
 
-void WorkAndPlayPage::OnEnSetfocusHour()
+void CombinedPage::OnEnSetfocusHour()
 {
     StallAutomaticUpdate();
 }
 
 
-void WorkAndPlayPage::OnBnClickedNow()
+void CombinedPage::OnBnClickedNow()
 {
     UpdateTime();
 }
 
 
-void WorkAndPlayPage::OnEnSetfocusMinute()
+void CombinedPage::OnEnSetfocusMinute()
 {
     StallAutomaticUpdate();
 }

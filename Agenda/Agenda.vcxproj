@@ -93,12 +93,12 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);\Projects\VC2019;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>E:\Projects\VC2015</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(SolutionDir)$(Configuration)/CustomControls.lib;$(SolutionDir)AgendaModel/$(Configuration)/AgendaModel.lib;\Projects\VC2019\Utilities/$(Configuration)/Utilities.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(Configuration)/CustomControls.lib;$(SolutionDir)AgendaModel/$(Configuration)/AgendaModel.lib;$(SolutionDir)..\Utilities/$(Configuration)/Utilities.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -141,13 +141,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);\Projects\VC2019;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(SolutionDir)$(Configuration)/CustomControls.lib;$(SolutionDir)AgendaModel/$(Configuration)/AgendaModel.lib;\Projects\VC2019\Utilities/$(Configuration)/Utilities.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(Configuration)/CustomControls.lib;$(SolutionDir)AgendaModel/$(Configuration)/AgendaModel.lib;$(SolutionDir)..\Utilities/$(Configuration)/Utilities.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -198,6 +198,7 @@
     <ClInclude Include="AgendaPage.h" />
     <ClInclude Include="AgendaSaver.h" />
     <ClInclude Include="AgendaTotalsList.h" />
+    <ClInclude Include="CombinedPage.h" />
     <ClInclude Include="EditAgendaDialog.h" />
     <ClInclude Include="EditItemDialog.h" />
     <ClInclude Include="FileLoader.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="AgendaPage.cpp" />
     <ClCompile Include="AgendaSaver.cpp" />
     <ClCompile Include="AgendaTotalsList.cpp" />
+    <ClCompile Include="CombinedPage.cpp" />
     <ClCompile Include="EditAgendaDialog.cpp" />
     <ClCompile Include="EditItemDialog.cpp" />
     <ClCompile Include="FileLoader.cpp" />

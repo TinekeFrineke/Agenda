@@ -9,13 +9,21 @@ namespace
 
 const std::tstring cWorkAndPlay(_T("WorkAndPlay"));
 const std::tstring cOldAgenda(_T("OldAgenda"));
+const std::tstring cCombined(_T("Combined"));
+const std::tstring cBoth(_T("Both"));
 
 Settings::Type ToType(const std::tstring& aName)
 {
     if (aName == cOldAgenda)
         return Settings::Type::OldAgenda;
 
-    return Settings::Type::WorkAndPlay;
+    if (aName == cBoth)
+        return Settings::Type::Both;
+
+    if (aName == cWorkAndPlay)
+        return Settings::Type::WorkAndPlay;
+
+    return Settings::Type::Combined;
 }
 
 std::tstring ToString(Settings::Type aType)
@@ -26,6 +34,10 @@ std::tstring ToString(Settings::Type aType)
             return cOldAgenda;
         case Settings::Type::WorkAndPlay:
             return cWorkAndPlay;
+        case Settings::Type::Combined:
+            return cCombined;
+        case Settings::Type::Both:
+            return cBoth;
         default:
             throw std::runtime_error("Wrong settings type");
     }
