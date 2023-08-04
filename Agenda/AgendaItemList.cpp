@@ -1,25 +1,27 @@
 
 #include "stdafx.h"
 
+#include <algorithm>
+
 #include "AgendaItemList.h"
+
 
 void AgendaItemListItem::Write(CListCtrl & aControl, int iItemIndex)
 {
-  LV_ITEM lvi;
-  memset(&lvi, 0, sizeof(LV_ITEM));
+    LV_ITEM lvi;
+    memset(&lvi, 0, sizeof(LV_ITEM));
 
-	lvi.mask = LVIF_TEXT | LVIF_PARAM;
-	lvi.iItem = iItemIndex;
-	lvi.iSubItem = 0;
-  lvi.lParam = (LPARAM)m_Item;
+    lvi.mask = LVIF_TEXT | LVIF_PARAM;
+    lvi.iItem = iItemIndex;
+    lvi.iSubItem = 0;
+    lvi.lParam = (LPARAM)m_Item;
 
-	int index = aControl.InsertItem(&lvi);
+    int index = aControl.InsertItem(&lvi);
 
-  aControl.SetItemText(index, 0, m_Agenda[m_Item].GetBegin().String().c_str());
-  aControl.SetItemText(index, 1, m_Agenda[m_Item].GetTaskName().c_str());
-  aControl.SetItemText(index, 2, m_Agenda[m_Item].GetEnd().String().c_str());
-  aControl.SetItemData(index, (DWORD_PTR)this);
-  //delete name;
+    aControl.SetItemText(index, 0, m_Agenda[m_Item].GetBegin().String().c_str());
+    aControl.SetItemText(index, 1, m_Agenda[m_Item].GetTaskName().c_str());
+    aControl.SetItemText(index, 2, m_Agenda[m_Item].GetEnd().String().c_str());
+    aControl.SetItemData(index, (DWORD_PTR)this);
 }
 
 Agenda::Item & AgendaItemListItem::GetItem()
@@ -29,17 +31,19 @@ Agenda::Item & AgendaItemListItem::GetItem()
 
 
 AgendaItemList::AgendaItemList(Agenda::Agenda & agenda)
-: m_Agenda(agenda)
+    : m_Agenda(agenda)
 {
-  SetNumberOfColumns(3);
-  SetColumnInfo     (0, ColInfo(60,  LVCFMT_LEFT,  _T("Start")));
-  SetColumnInfo     (1, ColInfo(250, LVCFMT_LEFT,  _T("Description")));
-  SetColumnInfo     (2, ColInfo(60,  LVCFMT_LEFT,  _T("End")));
 }
 
 AgendaItemList::~AgendaItemList()
 {
   ClearItems();
+}
+
+void AgendaItemList::Initialize()
+{
+    SetSize();
+    ListControl::Initialize();
 }
 
 void AgendaItemList::View(Agenda::Agenda & agenda)
@@ -60,6 +64,32 @@ void AgendaItemList::View(Agenda::Agenda & agenda)
     item.mask = LVIF_STATE;
     SelectItem(0, true);
   }
+
+  SetSize();
+}
+
+void AgendaItemList::SetSize()
+{
+    CFont* font = GetFont();
+    CClientDC deviceContext(this);
+    deviceContext.SelectObject(HFONT(*font));
+
+    RECT rectangle({ 0, 0, 0, 0 });
+    GetClientRect(&rectangle);
+    deviceContext.Rectangle(&rectangle);
+
+    CSize timeSize = deviceContext.GetTextExtent(L"99:99");
+    CSize startSize = deviceContext.GetTextExtent(L"Start");
+    const auto maxTimeWidth(std::max(timeSize.cx, startSize.cx));
+    const auto descriptionSize = rectangle.right - rectangle.left - 20 - maxTimeWidth * 2;
+
+    SetNumberOfColumns(3);
+    SetColumnInfo(0, ColInfo(maxTimeWidth, LVCFMT_LEFT, _T("Start")));
+    SetColumnInfo(1, ColInfo(descriptionSize, LVCFMT_LEFT, _T("Description")));
+    SetColumnInfo(2, ColInfo(maxTimeWidth, LVCFMT_LEFT, _T("End")));
+    SetColumnWidth(0, LVSCW_AUTOSIZE);
+    //SetColumnWidth(1, LVSCW_AUTOSIZE);
+    SetColumnWidth(2, LVSCW_AUTOSIZE);
 }
 
 AgendaItemListItem * AgendaItemList::GetItemAt(int iIndex)

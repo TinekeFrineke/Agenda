@@ -7,16 +7,16 @@
 class AgendaItemListItem
 {
 public:
-                                  AgendaItemListItem(Agenda::Agenda & agenda, unsigned int anItem)
-                                    : m_Agenda(agenda), m_Item(anItem) {}
+    AgendaItemListItem(Agenda::Agenda & agenda, unsigned int anItem)
+    : m_Agenda(agenda), m_Item(anItem) {}
 
-  void                            Write(CListCtrl & aControl, int iItemIndex);
+	void                            Write(CListCtrl & aControl, int iItemIndex);
 
-  Agenda::Item &                  GetItem();
+	Agenda::Item &                  GetItem();
 
 private:
-  Agenda::Agenda &                m_Agenda;
-  const unsigned int              m_Item;
+	Agenda::Agenda &                m_Agenda;
+	const unsigned int              m_Item;
 };
 
 
@@ -24,12 +24,13 @@ class AgendaItemList : public ListControl/* , public Observer*/
 {
 // Construction
 public:
-                                    AgendaItemList(Agenda::Agenda & agenda);
-	virtual                           ~AgendaItemList();
+    AgendaItemList(Agenda::Agenda & agenda);
+	virtual ~AgendaItemList();
 
- // // Operations
-  void                              View(Agenda::Agenda & agenda);
+	void                  Initialize() override;
+	void                          View(Agenda::Agenda & agenda);
 
+  void SetSize();
   AgendaItemListItem *              GetItemAt(int iIndex);
   AgendaItemListItem *              GetSelectedItem();
   void                              SelectItem(const Agenda::Item & anItem);
