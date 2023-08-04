@@ -282,16 +282,6 @@ void WorkAndPlayPage::UpdateView()
   m_Items.View(m_Today);
   Agenda::Time totalTime = Agenda::GetWorkedTime(m_Today, SettingUtils::ActvitiesToIgnore(m_Settings));
 
-  //typedef std::map<std::tstring, Agenda::Time, Str::ci_less> TotalsMap;
-  //TotalsMap totalsMap;
-  //Agenda::GetTotals(m_Today, totalsMap);
-
-  //Agenda::Time totalTime;
-  //for (TotalsMap::const_iterator iter = totalsMap.begin(); iter != totalsMap.end(); ++iter)
-  //  if (!m_Settings.HasDefaultActivity(iter->first)
-  //      || m_Settings.ShouldAddDefeaultActivity(iter->first))
-  //    totalTime += iter->second;
-
   m_Totaal.SetWindowText(totalTime.String().c_str());
 
   Agenda::TotalTime weekTotals(m_WeekTotals);
@@ -327,19 +317,9 @@ void WorkAndPlayPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
   UpdateView();
   WriteAgenda();
 
-  // TODO: Add your control notification handler code here
   *pResult = 0;
 }
 
-int WorkAndPlayPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-    if (__super::OnCreate(lpCreateStruct) == -1)
-        return -1;
-
-    // TODO:  Add your specialized creation code here
-
-    return 0;
-}
 
 
 void WorkAndPlayPage::OnEnSetfocusHour()
