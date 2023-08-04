@@ -320,6 +320,13 @@ void WorkAndPlayPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
   *pResult = 0;
 }
 
+int WorkAndPlayPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+    if (__super::OnCreate(lpCreateStruct) == -1)
+        return -1;
+
+    return 0;
+}
 
 
 void WorkAndPlayPage::OnEnSetfocusHour()

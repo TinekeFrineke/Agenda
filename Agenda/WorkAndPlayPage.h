@@ -85,4 +85,5 @@ private:
 
 	CButton m_WorkButton;
 	CButton m_PlayButton;
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
