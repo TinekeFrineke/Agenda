@@ -203,7 +203,7 @@ void CombinedPage::OnBnClickedPlay()
     WriteAgenda();
 }
 
-void CombinedPage::AddItem(const std::tstring& Item)
+void CombinedPage::AddItem(const std::tstring& item)
 {
     Agenda::Time time;
 
@@ -220,11 +220,12 @@ void CombinedPage::AddItem(const std::tstring& Item)
     stime.wHour = static_cast<unsigned short>(time.GetHour());
     stime.wMinute = static_cast<unsigned short>(time.GetMinute());
 
-    m_Today.Add(Agenda::Item(stime, Item), true);
-    if (m_Description.FindString(0, Item.c_str()) == CB_ERR)
-      m_Description.InsertString(0, Item.c_str());
+    m_Today.Add(Agenda::Item(stime, item), true);
+    if (m_Description.FindString(0, item.c_str()) == CB_ERR)
+      m_Description.InsertString(0, item.c_str());
 
-    m_Description.SelectString(0, Item.c_str());
+    if (item != L"Work" && item != L"Play")
+        m_Description.SelectString(0, item.c_str());
   
     UpdateView();
 }
@@ -353,8 +354,7 @@ void CombinedPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
   UpdateView();
   WriteAgenda();
 
-  // TODO: Add your control notification handler code here
-  *pResult = 0;
+    *pResult = 0;
 }
 
 int CombinedPage::OnCreate(LPCREATESTRUCT lpCreateStruct)

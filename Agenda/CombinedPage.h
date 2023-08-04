@@ -62,7 +62,7 @@ protected:
 
 private:
 	void UpdateView();
-	void AddItem(const std::tstring& Item);
+	void AddItem(const std::tstring& item);
 	void WriteAgenda();
 	// Makes sure the timer is not automatically updated in the next minute
 	void StallAutomaticUpdate();
