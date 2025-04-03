@@ -3,8 +3,9 @@
 //
 
 #include "stdafx.h"
-#include "Agenda.h"
 #include "AgendaDialog.h"
+
+#include "Agenda.h"
 #include "afxdialogex.h"
 
 #include "AgendaPage.h"
@@ -86,9 +87,9 @@ BOOL AgendaDialog::OnInitDialog()
 	{
 	case Settings::Type::WorkAndPlay:
 	{
-		m_TabControl.AddPage(new WorkAndPlayPage(m_Agenda, m_Settings, this), IDD_WORK_AND_PLAY_PAGE, _T("Vandaag"));
-		m_TabControl.AddPage(new OldFilesPage(m_Settings, this), IDD_OLDFILES_DIALOG, _T("Oud"));
-		m_TabControl.AddPage(new TotalsPage(m_Settings, this), IDD_TOTALS_PAGE, _T("Totalen"));
+		m_TabControl.AddPage(new WorkAndPlayPage(m_Agenda, m_Settings, this), IDD_WORK_AND_PLAY_PAGE, "Vandaag");
+		m_TabControl.AddPage(new OldFilesPage(m_Settings, this), IDD_OLDFILES_DIALOG, "Oud");
+		m_TabControl.AddPage(new TotalsPage(m_Settings, this), IDD_TOTALS_PAGE, "Totalen");
 		break;
 	}
 	case Settings::Type::OldAgenda:

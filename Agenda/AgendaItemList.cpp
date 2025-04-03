@@ -78,15 +78,15 @@ void AgendaItemList::SetSize()
     GetClientRect(&rectangle);
     deviceContext.Rectangle(&rectangle);
 
-    CSize timeSize = deviceContext.GetTextExtent(L"99:99");
-    CSize startSize = deviceContext.GetTextExtent(L"Start");
+    CSize timeSize = deviceContext.GetTextExtent("99:99");
+    CSize startSize = deviceContext.GetTextExtent("Start");
     const auto maxTimeWidth(std::max(timeSize.cx, startSize.cx));
     const auto descriptionSize = rectangle.right - rectangle.left - 20 - maxTimeWidth * 2;
 
     SetNumberOfColumns(3);
-    SetColumnInfo(0, ColInfo(maxTimeWidth, LVCFMT_LEFT, _T("Start")));
-    SetColumnInfo(1, ColInfo(descriptionSize, LVCFMT_LEFT, _T("Description")));
-    SetColumnInfo(2, ColInfo(maxTimeWidth, LVCFMT_LEFT, _T("End")));
+    SetColumnInfo(0, ColInfo(maxTimeWidth, LVCFMT_LEFT, "Start"));
+    SetColumnInfo(1, ColInfo(descriptionSize, LVCFMT_LEFT, "Description"));
+    SetColumnInfo(2, ColInfo(maxTimeWidth, LVCFMT_LEFT, "End"));
     SetColumnWidth(0, LVSCW_AUTOSIZE);
     //SetColumnWidth(1, LVSCW_AUTOSIZE);
     SetColumnWidth(2, LVSCW_AUTOSIZE);

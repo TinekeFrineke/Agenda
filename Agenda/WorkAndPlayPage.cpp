@@ -6,13 +6,9 @@
 #include "Agenda.h"
 #include "WorkAndPlayPage.h"
 
-#include <tchar.h>
-
 #include <AgendaModel/AgendaUtilities.h>
 #include <CustomControls/ItemListControl.h>
 #include <Utilities/Date.h>
-#include <Utilities/DateUtils.h>
-
 
 #include "afxdialogex.h"
 #include "AgendaSaver.h"
@@ -20,6 +16,7 @@
 #include "FileLoader.h"
 #include "Settings.h"
 #include "SettingUtils.h"
+
 
 BEGIN_MESSAGE_MAP(WorkAndPlayPage, CDialog)
     ON_BN_CLICKED(IDC_WORK, &WorkAndPlayPage::OnBnClickedWork)
@@ -42,28 +39,27 @@ END_MESSAGE_MAP()
 
 IMPLEMENT_DYNAMIC(WorkAndPlayPage, CDialog)
 
-WorkAndPlayPage::WorkAndPlayPage(Agenda::Agenda & agenda,
+WorkAndPlayPage::WorkAndPlayPage(Agenda::Agenda& agenda,
                                  Settings& settings,
                                  CWnd* pParent /*=NULL*/)
-:   CDialog   (IDD_WORK_AND_PLAY_PAGE, pParent),
-    m_Today   (agenda),
+    : CDialog(IDD_WORK_AND_PLAY_PAGE, pParent),
+    m_Today(agenda),
     m_Settings(settings),
-    m_Items   (agenda),
-    m_TimerID (300000)
+    m_Items(agenda),
+    m_TimerID(300000)
 {
     if (!m_Settings.HasDefaultActivity(_T("Play")))
         m_Settings.AddDefaultActivity(_T("Play"), false);
 
-    Utils::Date newdate(Utils::Date::Today());
-    Agenda::Date Today(Utils::Date::ToSystemTime(newdate));
-    std::vector<Agenda::Date> week(GetWeek(Today));
+    Utils::Date today(Utils::Today());
+    std::vector<Utils::Date> week(GetWeek(today));
 
     auto toIgnore(SettingUtils::ActvitiesToIgnore(settings));
 
     FileLoader loader(m_Settings);
     for (const auto& date : week)
     {
-        if (date == Today)
+        if (date == today)
             continue;
 
         Agenda::Agenda oldagenda;
@@ -74,16 +70,16 @@ WorkAndPlayPage::WorkAndPlayPage(Agenda::Agenda & agenda,
 
 WorkAndPlayPage::~WorkAndPlayPage()
 {
-  //KillTimer(m_TimerID);
+    //KillTimer(m_TimerID);
 }
 
 void WorkAndPlayPage::UpdateTime()
 {
-  UpdateTime(Agenda::Time::Now());
+    UpdateTime(Agenda::Time::Now());
 }
 
-void WorkAndPlayPage::UpdateTime(const Agenda::Time & time)
-    {
+void WorkAndPlayPage::UpdateTime(const Agenda::Time& time)
+{
     TCHAR text[1024];
     _stprintf_s(text, _T("%0d"), time.GetHour());
     m_Hour.SetWindowText(text);
@@ -93,52 +89,52 @@ void WorkAndPlayPage::UpdateTime(const Agenda::Time & time)
 
 BOOL WorkAndPlayPage::OnInitDialog()
 {
-  CDialog::OnInitDialog();
-  m_Timer = SetTimer(m_TimerID, 1000, NULL);
-  UpdateTime();
+    CDialog::OnInitDialog();
+    m_Timer = SetTimer(m_TimerID, 1000, NULL);
+    UpdateTime();
 
-  // Read yesterday's items and add them:
-  Path agendapath(m_Settings.GetDataPath() + _T("*.age"));
-  std::tstring todayfile(Agenda::Date().String() + _T(".age"));
-  std::tstring yesterdayfile;
+    // Read yesterday's items and add them:
+    Path agendapath(m_Settings.GetDataPath() + "*.age");
+    std::string todayfile(Agenda::Date().String() + ".age");
+    std::string yesterdayfile;
 
-  WIN32_FIND_DATA finddata;
-  HANDLE hFile = FindFirstFile(agendapath.AsString().c_str(), &finddata);
-  if (hFile !=  INVALID_HANDLE_VALUE) {
-    std::tstring latestfile(finddata.cFileName);
-    if (latestfile != std::tstring(Agenda::Date().String()) + _T(".age")) {
-      if (yesterdayfile.empty() || latestfile > yesterdayfile)
-        yesterdayfile = latestfile;
+    WIN32_FIND_DATA finddata;
+    HANDLE hFile = FindFirstFile(agendapath.AsString().c_str(), &finddata);
+    if (hFile != INVALID_HANDLE_VALUE) {
+        std::string latestfile(finddata.cFileName);
+        if (latestfile != std::string(Agenda::Date().String()) + ".age") {
+            if (yesterdayfile.empty() || latestfile > yesterdayfile)
+                yesterdayfile = latestfile;
+        }
+
+        while (FindNextFile(hFile, &finddata) != FALSE) {
+            latestfile = finddata.cFileName;
+            if (latestfile != std::string(Agenda::Date().String()) + ".age") {
+                if (yesterdayfile.empty() || latestfile > yesterdayfile)
+                    yesterdayfile = latestfile;
+            }
+        }
     }
 
-    while (FindNextFile(hFile, &finddata) != FALSE) {
-      latestfile = finddata.cFileName;
-      if (latestfile != std::tstring(Agenda::Date().String()) + _T(".age")) {
-        if (yesterdayfile.empty() || latestfile > yesterdayfile)
-          yesterdayfile = latestfile;
-      }
-    }
-  }
+    m_Items.Initialize();
+    m_Items.SetSelectionMark(0);
+    m_Items.ShowWindow(SW_SHOW);
 
-  m_Items.Initialize();
-  m_Items.SetSelectionMark(0);
-  m_Items.ShowWindow(SW_SHOW);
-  
-  UpdateView();
+    UpdateView();
 
-  return TRUE;
+    return TRUE;
 }
 
-void WorkAndPlayPage::RetrieveTime(Agenda::Time & time) const
+void WorkAndPlayPage::RetrieveTime(Agenda::Time& time) const
 {
-  // TODO: Add your control notification handler code here
-  TCHAR text[1024];
-  m_Hour.GetWindowText(text, 1024);
-  int hours(_ttoi(text));
-  time.Hour(hours);
-  m_Minutes.GetWindowText(text, 1024);
-  int minutes(_ttoi(text));
-  time.Minute(minutes);
+    // TODO: Add your control notification handler code here
+    char text[1024];
+    m_Hour.GetWindowText(text, 1024);
+    int hours(atoi(text));
+    time.Hour(hours);
+    m_Minutes.GetWindowText(text, 1024);
+    int minutes(atoi(text));
+    time.Minute(minutes);
 }
 
 void WorkAndPlayPage::DoDataExchange(CDataExchange* pDX)
@@ -161,17 +157,17 @@ void WorkAndPlayPage::DoDataExchange(CDataExchange* pDX)
 
 void WorkAndPlayPage::OnBnClickedWork()
 {
-    AddItem(_T("Work"));
+    AddItem("Work");
     WriteAgenda();
 }
 
 void WorkAndPlayPage::OnBnClickedPlay()
 {
-    AddItem(_T("Play"));
+    AddItem("Play");
     WriteAgenda();
 }
 
-void WorkAndPlayPage::AddItem(const std::tstring& Item)
+void WorkAndPlayPage::AddItem(const std::string& Item)
 {
     Agenda::Time time;
 
@@ -179,7 +175,7 @@ void WorkAndPlayPage::AddItem(const std::tstring& Item)
         RetrieveTime(time);
     }
     catch (std::runtime_error& error) {
-        MessageBox(Str::ToTString(error.what()).c_str(), _T("ERROR READING TIME"), MB_OK);
+        MessageBox(error.what(), "ERROR READING TIME", MB_OK);
         return;
     }
 
@@ -196,12 +192,11 @@ void WorkAndPlayPage::AddItem(const std::tstring& Item)
 void WorkAndPlayPage::WriteAgenda()
 {
     AgendaSaver Saver(m_Settings);
-    Utils::Date newdate(Utils::Date::Today());
-    Agenda::Date Today(Utils::Date::ToSystemTime(newdate));
+    Utils::Date today(Utils::Today());
 
-    if (!Saver.Save(Today, m_Today))
+    if (!Saver.Save(today, m_Today))
     {
-        MessageBox(_T("Could not save agenda"), _T("ERROR WRITING AGENDA"), MB_OK);
+        MessageBox("Could not save agenda", "ERROR WRITING AGENDA", MB_OK);
     }
 }
 
@@ -212,18 +207,17 @@ void WorkAndPlayPage::StallAutomaticUpdate()
     m_Timer = SetTimer(m_TimerID, 60000, NULL);
 }
 
-std::vector<Agenda::Date> WorkAndPlayPage::GetWeek(const Agenda::Date& today)
+std::vector<Utils::Date> WorkAndPlayPage::GetWeek(const Utils::Date& today)
 {
-    std::vector<Agenda::Date> dates;
+    std::vector<Utils::Date> dates;
 
-    SYSTEMTIME stime(today.ToSystemTime());
-    SYSTEMTIME sunday(Date::GetSundayBefore(stime));
-    Utils::Date startDate(Utils::Date::FromSystemTime(sunday));
+    const Utils::Date sunday(Utils::GetSundayBefore(today));
+    Utils::Date startDate(sunday);
 
     for (size_t i = 0; i < 6; ++i)
     {
         startDate.AddDays(1);
-        dates.push_back(Agenda::Date(Utils::Date::ToSystemTime(startDate)));
+        dates.push_back(startDate);
     }
 
     return dates;
@@ -232,92 +226,92 @@ std::vector<Agenda::Date> WorkAndPlayPage::GetWeek(const Agenda::Date& today)
 
 void WorkAndPlayPage::OnTimer(UINT_PTR nIDEvent)
 {
-  UpdateTime();
-  __super::OnTimer(nIDEvent);
-  m_Timer = SetTimer(m_TimerID, 1000, NULL);
+    UpdateTime();
+    __super::OnTimer(nIDEvent);
+    m_Timer = SetTimer(m_TimerID, 1000, NULL);
 }
 
 
 void WorkAndPlayPage::OnEnChangeHour()
 {
-  // When the user edits the time, stretch the update of the time fields
-  StallAutomaticUpdate();
+    // When the user edits the time, stretch the update of the time fields
+    StallAutomaticUpdate();
 }
 
 
 void WorkAndPlayPage::OnEnChangeMinute()
 {
-  // When the user edits the time, stretch the update of the time fields
-  StallAutomaticUpdate();
+    // When the user edits the time, stretch the update of the time fields
+    StallAutomaticUpdate();
 }
 
 
-void WorkAndPlayPage::OnDeltaposHourspin(NMHDR *pNMHDR, LRESULT *pResult)
+void WorkAndPlayPage::OnDeltaposHourspin(NMHDR* pNMHDR, LRESULT* pResult)
 {
-  LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+    LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 
-  Agenda::Time time;
-  RetrieveTime(time);
-  time -= pNMUpDown->iDelta * 60;
-  UpdateTime(time);
+    Agenda::Time time;
+    RetrieveTime(time);
+    time -= pNMUpDown->iDelta * 60;
+    UpdateTime(time);
 
-  *pResult = 0;
+    *pResult = 0;
 }
 
 
-void WorkAndPlayPage::OnDeltaposMinutespin(NMHDR *pNMHDR, LRESULT *pResult)
+void WorkAndPlayPage::OnDeltaposMinutespin(NMHDR* pNMHDR, LRESULT* pResult)
 {
-  LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+    LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 
-  Agenda::Time time;
-  RetrieveTime(time);
-  time -= pNMUpDown->iDelta;
-  UpdateTime(time);
+    Agenda::Time time;
+    RetrieveTime(time);
+    time -= pNMUpDown->iDelta;
+    UpdateTime(time);
 
-  *pResult = 0;
+    *pResult = 0;
 }
 
 void WorkAndPlayPage::UpdateView()
 {
-  m_Items.View(m_Today);
-  Agenda::Time totalTime = Agenda::GetWorkedTime(m_Today, SettingUtils::ActvitiesToIgnore(m_Settings));
+    m_Items.View(m_Today);
+    Agenda::Time totalTime = Agenda::GetWorkedTime(m_Today, SettingUtils::ActvitiesToIgnore(m_Settings));
 
-  m_Totaal.SetWindowText(totalTime.String().c_str());
+    m_Totaal.SetWindowText(totalTime.String().c_str());
 
-  Agenda::TotalTime weekTotals(m_WeekTotals);
-  weekTotals += totalTime;
-  m_Week.SetWindowText(weekTotals.String().c_str());
+    Agenda::TotalTime weekTotals(m_WeekTotals);
+    weekTotals += totalTime;
+    m_Week.SetWindowText(weekTotals.String().c_str());
 }
 
 
-void WorkAndPlayPage::OnNMDblclkActivitylist(NMHDR *pNMHDR, LRESULT *pResult)
+void WorkAndPlayPage::OnNMDblclkActivitylist(NMHDR* pNMHDR, LRESULT* pResult)
 {
-  LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-  if (pNMItemActivate->iItem == -1) {
+    LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+    if (pNMItemActivate->iItem == -1) {
+        *pResult = 0;
+        return;
+    }
+
+    AgendaItemListItem* pItem(reinterpret_cast<AgendaItemListItem*>(m_Items.GetItemData(pNMItemActivate->iItem)));
+    Agenda::Item& item(pItem->GetItem());
+
+    EditItemDialog dialog(item, this);
+    INT_PTR nResponse = dialog.DoModal();
+    switch (nResponse) {
+        case IDOK:
+            break;
+        case IDCANCEL:
+            break;
+        default:
+            TRACE(traceAppMsg, 0, "Warning: dialog creation failed, so application is terminating unexpectedly.\n");
+            TRACE(traceAppMsg, 0, "Warning: if you are using MFC controls on the dialog, you cannot #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS.\n");
+            break;
+    }
+
+    UpdateView();
+    WriteAgenda();
+
     *pResult = 0;
-    return;
-  }
-
-  AgendaItemListItem * pItem(reinterpret_cast<AgendaItemListItem *>(m_Items.GetItemData(pNMItemActivate->iItem)));
-  Agenda::Item & item(pItem->GetItem());
-
-  EditItemDialog dialog(item, this);
-  INT_PTR nResponse = dialog.DoModal();
-  switch (nResponse) {
-    case IDOK:
-    break;
-    case IDCANCEL:
-    break;
-    default:
-		  TRACE(traceAppMsg, 0, "Warning: dialog creation failed, so application is terminating unexpectedly.\n");
-		  TRACE(traceAppMsg, 0, "Warning: if you are using MFC controls on the dialog, you cannot #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS.\n");
-    break;
-	}
-
-  UpdateView();
-  WriteAgenda();
-
-  *pResult = 0;
 }
 
 int WorkAndPlayPage::OnCreate(LPCREATESTRUCT lpCreateStruct)

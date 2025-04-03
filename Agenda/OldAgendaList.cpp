@@ -1,6 +1,8 @@
 
 #include "stdafx.h"
 
+#include <fstream>
+
 #include "OldAgendaList.h"
 #include "Settings.h"
 
@@ -42,7 +44,7 @@ OldAgendaList::~OldAgendaList()
   ClearItems();
 }
 
-void OldAgendaList::FillFrom(const std::tstring & filename)
+void OldAgendaList::FillFrom(const std::string & filename)
 {
   DeleteAllItems();
   ClearItems();
@@ -50,7 +52,7 @@ void OldAgendaList::FillFrom(const std::tstring & filename)
   Path path(m_Path);
   path += filename;
   m_Agenda.Clear();
-  std::tifstream stream(path.AsString().c_str());
+  std::ifstream stream(path.AsString());
   stream >> m_Agenda;
 
   m_SumList.clear();

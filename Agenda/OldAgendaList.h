@@ -1,27 +1,28 @@
 #pragma once
 
+#include <string>
+
 #include <CustomControls/ItemListControl.h>
-#include <Utilities/PathUtils.h>
+#include <Utilities/Path.h>
 
 #include "../AgendaModel/Agenda.h"
 
 class Settings;
 
-typedef std::map<std::tstring, Agenda::Time> SumList;
+typedef std::map<std::string, Agenda::Time> SumList;
+
 
 class OldAgendaItem
 {
 public:
-                                  OldAgendaItem(const std::tstring & task, const Agenda::Time & time)
+                                  OldAgendaItem(const std::string & task, const Agenda::Time & time)
                                     : m_Task(task), m_Time(time) {}
 
   void                            Write(CListCtrl & aControl, int iItemIndex);
 
-  //Agenda::Item &                  GetItem();
-
 private:
-  std::tstring                    m_Task;
-  Agenda::Time                    m_Time;
+  std::string m_Task;
+  Agenda::Time m_Time;
 };
 
 
@@ -32,7 +33,7 @@ public:
   OldAgendaList(const Settings & settings);
   virtual                       ~OldAgendaList();
 
-  void                          FillFrom(const std::tstring & filename);
+  void                          FillFrom(const std::string & filename);
   void                          SelectItem(int iIndex, bool bSelect);
 
 protected:

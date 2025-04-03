@@ -24,7 +24,7 @@ class AgendaLoaderFromFile : public Agenda::IAgendaLoader
 public:
     AgendaLoaderFromFile(const Settings& settings);
 
-    bool Load(const Agenda::Date& date, Agenda::Agenda& agenda) const override;
+    bool Load(const Utils::Date& date, Agenda::Agenda& agenda) const override;
 
 private:
     void Load(Agenda::Agenda& agenda, const Path& path) const;
@@ -32,6 +32,6 @@ private:
     const Settings& m_Settings;
 };
 
-std::vector<std::tstring> ActvitiesToIgnore(const Settings& settings);
+std::vector<std::string> ActvitiesToIgnore(const Settings& settings);
 
 }

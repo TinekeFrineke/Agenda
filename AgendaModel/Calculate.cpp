@@ -12,14 +12,14 @@
 namespace Agenda
 {
 
-void GrandTotal(const std::tstring &                         aTimeFrom,
-                const std::tstring &                         aTimeTo,
-                std::map<std::tstring, Time, Str::ci_less> & aTotalMap)
+void GrandTotal(const std::string &                         aTimeFrom,
+                const std::string &                         aTimeTo,
+                std::map<std::string, Time, Str::ci_less> & aTotalMap)
 {
-  std::list<std::tstring> filenames;
+  std::list<std::string> filenames;
 
   WIN32_FIND_DATA data;
-  std::tstring fileprefix = _T("*.age");
+  std::string fileprefix = "*.age";
   HANDLE file = FindFirstFile(fileprefix.c_str(), &data);
   if (file != INVALID_HANDLE_VALUE)
   {
@@ -30,7 +30,7 @@ void GrandTotal(const std::tstring &                         aTimeFrom,
     // Retrieve next file starting with aDatasetName in aSourceDir:
     while (FindNextFile(file, &data) != FALSE)
     {
-      std::list<std::tstring>::iterator iter = filenames.begin();
+      std::list<std::string>::iterator iter = filenames.begin();
       if (data.dwFileAttributes != FILE_ATTRIBUTE_DIRECTORY)
       {
         while (iter != filenames.end() && *iter < data.cFileName)
@@ -44,21 +44,21 @@ void GrandTotal(const std::tstring &                         aTimeFrom,
     FindClose(file);
   }
 
-  for (std::list<std::tstring>::const_iterator citer = filenames.begin();
+  for (std::list<std::string>::const_iterator citer = filenames.begin();
        citer != filenames.end();
        citer++)
   {
-    std::tstring timestring = citer->substr(0, citer->find('.'));
+    std::string timestring = citer->substr(0, citer->find('.'));
 
     if (timestring >= aTimeFrom && timestring <= aTimeTo)
     {
       try
       {
         Agenda agenda;
-        std::tifstream instream(Str::ToString(citer->c_str()).c_str(), std::ios::in);
+        std::ifstream instream(*citer, std::ios::in);
         if (instream.bad())
         {
-          MessageBox(0, (_T("Error reading ") + *citer).c_str(), _T("Error"), MB_OK);
+          MessageBox(0, ("Error reading " + *citer).c_str(), "Error", MB_OK);
           continue;
         }
         else if (instream.is_open())
@@ -70,21 +70,21 @@ void GrandTotal(const std::tstring &                         aTimeFrom,
       }
       catch(...)
       {
-        MessageBox(0, _T("Exception reading file"), _T("ERROR"), MB_OK);
+        MessageBox(0, "Exception reading file", "ERROR", MB_OK);
       }
     }
   }
 }
 
 
-void GrandTotal(const std::tstring &                         aTimeFrom,
-                std::map<std::tstring, Time, Str::ci_less> & aTotalMap)
+void GrandTotal(const std::string &                         aTimeFrom,
+                std::map<std::string, Time, Str::ci_less> & aTotalMap)
 {
   SYSTEMTIME timeto;
   GetLocalTime(&timeto);
 
-  TCHAR stimeto[9];
-  _stprintf_s(stimeto, _T("%04d%02d%02d"), timeto.wYear, timeto.wMonth, timeto.wDay);
+  char stimeto[9];
+  sprintf_s(stimeto, "%04d%02d%02d", timeto.wYear, timeto.wMonth, timeto.wDay);
 
   GrandTotal(aTimeFrom, stimeto, aTotalMap);
 }

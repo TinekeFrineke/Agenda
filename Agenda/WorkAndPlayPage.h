@@ -10,6 +10,10 @@
 
 #include "AgendaItemList.h"
 
+namespace Utils {
+class Date;
+}
+
 // AgendaPage dialog
 
 // The page upxdates the time from time to time:
@@ -61,12 +65,12 @@ protected:
 
 private:
 	void UpdateView();
-	void AddItem(const std::tstring& Item);
+	void AddItem(const std::string& Item);
 	void WriteAgenda();
 	// Makes sure the timer is not automatically updated in the next minute
 	void StallAutomaticUpdate();
 
-	static std::vector<Agenda::Date> GetWeek(const Agenda::Date& today);
+	static std::vector<Utils::Date> GetWeek(const Utils::Date& today);
 
 	Agenda::Agenda &    m_Today;
 	Settings &          m_Settings;

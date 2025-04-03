@@ -1,18 +1,20 @@
 #pragma once
 
-#include <list>
+
+namespace Utils {
+class Date;
+}
+
 
 namespace Agenda
 {
 
 class Agenda;
-class Date;
-
 
 class IAgendaLoader
 {
 public:
-    virtual bool Load(const Date& date, Agenda& agenda) const = 0;
+    virtual bool Load(const Utils::Date& date, Agenda& agenda) const = 0;
 };
 
 class WeekLoader

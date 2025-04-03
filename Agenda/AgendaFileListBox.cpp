@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-#include <Utilities/PathUtils.h>
+#include <Utilities/Path.h>
 
 #include "Settings.h"
 
@@ -19,10 +19,10 @@ AgendaFileListBox::~AgendaFileListBox()
 
 void AgendaFileListBox::Fill(const Path & aPath)
 {
-  std::vector<std::tstring> listboxtexts;
+  std::vector<std::string> listboxtexts;
 
   Path path(aPath);
-  path += _T("*.age");
+  path += "*.age";
   WIN32_FIND_DATA finddata;
   memset(&finddata, 0, sizeof(WIN32_FIND_DATA));
   HANDLE hFile = FindFirstFile(path.AsString().c_str(), &finddata);
@@ -36,11 +36,11 @@ void AgendaFileListBox::Fill(const Path & aPath)
 
   std::sort(listboxtexts.begin(), listboxtexts.end());
 
-  for (std::vector<std::tstring>::reverse_iterator riter = listboxtexts.rbegin(); riter != listboxtexts.rend(); ++riter)
+  for (std::vector<std::string>::reverse_iterator riter = listboxtexts.rbegin(); riter != listboxtexts.rend(); ++riter)
     AddString(*riter);
 }
 
-void AgendaFileListBox::AddString(const std::tstring & string)
+void AgendaFileListBox::AddString(const std::string & string)
 {
   CListBox::AddString(string.c_str());
 }

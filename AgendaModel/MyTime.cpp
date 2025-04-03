@@ -1,5 +1,5 @@
 
-#include "Time.h"
+#include "MyTime.h"
 
 #include <assert.h>  
 
@@ -42,12 +42,12 @@ Time Time::Now()
 }
 
 
-std::tstring Time::String() const
+std::string Time::String() const
 {
-  TCHAR time[6];
-  _stprintf_s(time, _T("%02d:%02d"), mHour, mMinutes);
-  time[5] = _T('\0');
-  return std::tstring(time);
+  char time[6];
+  sprintf_s(time, "%02d:%02d", mHour, mMinutes);
+  time[5] = '\0';
+  return time;
 }
 
 Time & Time::Hour(unsigned int anHour)
@@ -143,7 +143,7 @@ bool operator< (const Time & aTime1, const Time & aTime2)
 
 
 //--------------------------------------------------------------------------
-int operator -(const Time & aTime1, const Time & aTime2)
+int operator-(const Time & aTime1, const Time & aTime2)
 {
   int t1 = aTime1.GetHour() * 60 + aTime1.GetMinute();
   int t2 = aTime2.GetHour() * 60 + aTime2.GetMinute();
@@ -152,10 +152,10 @@ int operator -(const Time & aTime1, const Time & aTime2)
 }
 
 
-bool ToTime(const std::tstring &  aTime, Time & time,
-            const std::tstring &  aSeparator)
+bool ToTime(const std::string &  aTime, Time & time,
+            const std::string &  aSeparator)
 {
-  std::vector<std::tstring> tokens;
+  std::vector<std::string> tokens;
   Str::StrTok(aTime, aSeparator, tokens);
 
   if (tokens.size() != 2)
@@ -166,9 +166,9 @@ bool ToTime(const std::tstring &  aTime, Time & time,
   return true;
 }
 
-Time ToTime(const std::tstring & aTime, const std::tstring & aSeparator)
+Time ToTime(const std::string & aTime, const std::string & aSeparator)
 {
-  std::vector<std::tstring> tokens;
+  std::vector<std::string> tokens;
   Str::StrTok(aTime, aSeparator, tokens);
 
   Time time;
@@ -190,9 +190,9 @@ Time ToTime(const std::tstring & aTime, const std::tstring & aSeparator)
 
 
 //------------------------------------------------------------------------------
-std::tistream & operator>>(std::tistream & aStream, Agenda::Time & aTime)
+std::istream & operator>>(std::istream & aStream, Agenda::Time & aTime)
 {
-  std::tstring token;
+  std::string token;
   aStream >> token;
   aTime = Agenda::ToTime(token);
 
@@ -201,7 +201,7 @@ std::tistream & operator>>(std::tistream & aStream, Agenda::Time & aTime)
 
 
 //------------------------------------------------------------------------------
-std::tostream & operator<<(std::tostream & aStream, const Agenda::Time & aTime)
+std::ostream & operator<<(std::ostream & aStream, const Agenda::Time & aTime)
 {
   aStream << aTime.String();
   return aStream;

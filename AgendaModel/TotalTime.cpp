@@ -1,7 +1,7 @@
 
 #include "TotalTime.h"
 
-#include "Time.h"
+#include "MyTime.h"
 
 //#include <assert.h>  
 //
@@ -27,12 +27,12 @@ unsigned int TotalTime::GetMinute() const
     return mMinutes % 60;
 }
 
-std::tstring TotalTime::String() const
+std::string TotalTime::String() const
 {
-    std::tstring Text(Str::ToTString(std::to_string(GetHour())));
-    Text += _T(":");
-    TCHAR min[10];
-    _stprintf_s(min, _T("%02u"), GetMinute());
+    std::string Text(std::to_string(GetHour()));
+    Text += ":";
+    char min[10];
+    sprintf_s(min, "%02u", GetMinute());
     Text += min;
     return Text;
 }

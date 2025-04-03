@@ -2,7 +2,8 @@
 
 #include "SettingUtils.h"
 
-#include <Utilities/PathUtils.h>
+#include <Utilities/Date.h>
+#include <Utilities/Path.h>
 
 #include "Settings.h"
 
@@ -14,10 +15,10 @@ AgendaLoaderFromFile::AgendaLoaderFromFile(const Settings& settings)
 {
 }
 
-bool AgendaLoaderFromFile::Load(const Agenda::Date& date, Agenda::Agenda& agenda) const
+bool AgendaLoaderFromFile::Load(const Utils::Date& date, Agenda::Agenda& agenda) const
 {
     Path path(m_Settings.GetDataPath());
-    path += date.String() + _T(".age");
+    path += Utils::ToString(date) + _T(".age");
     Load(agenda, path);
     return !agenda.Empty();
 }
@@ -25,15 +26,15 @@ bool AgendaLoaderFromFile::Load(const Agenda::Date& date, Agenda::Agenda& agenda
 void AgendaLoaderFromFile::Load(Agenda::Agenda& agenda, const Path& path) const
 {
     agenda.Clear();
-    std::tifstream stream(path.AsString().c_str());
+    std::ifstream stream(path.AsString());
     stream >> agenda;
 }
 
-std::vector<std::tstring> ActvitiesToIgnore(const Settings& settings)
+std::vector<std::string> ActvitiesToIgnore(const Settings& settings)
 {
     const std::vector<Settings::Activity> activities(settings.GetDefaultActivities());
 
-    std::vector<std::tstring> toIgnore;
+    std::vector<std::string> toIgnore;
 
     for (const auto& activity : activities)
     {

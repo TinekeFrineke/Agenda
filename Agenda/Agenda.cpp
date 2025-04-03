@@ -11,7 +11,7 @@
 #endif
 
 #include <Utilities/Inifile.h>
-#include <Utilities/PathUtils.h>
+#include <Utilities/Path.h>
 
 #include "../AgendaModel/Agenda.h"
 #include "Settings.h"
@@ -77,26 +77,27 @@ BOOL AgendaApplication::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-	TCHAR cpath[MAX_PATH];
+	char cpath[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, cpath);
 
 	Path path(cpath);
-	Path logpath(path + _T("WorkAndPlay.log"));
-	Logger::CreateInstance(Str::ToString(*logpath));
+	Path logpath(path + "WorkAndPlay.log");
+	Logger::CreateInstance(*logpath);
 
 	// Create the current agenda item
 	Agenda::Agenda agenda;
 	Agenda::Date today;
-	std::tstring agendaname(today.String() + _T(".age"));
+	std::string agendaname(today.String() + ".age");
 	Path agendapath(path + agendaname);
 
 	// Create the agenda settings item
-	Path settingspath(path + _T("agenda.ini"));
-	Inifile inifile(settingspath.AsString());
+	Path settingspath(path + "agenda.ini");
+	std::ifstream input(settingspath.AsString());
+	Inifile inifile(input);
 	Settings settings(path);
 	settings.FillFrom(inifile);
 
-	std::wifstream instream(agendapath.AsString().c_str());
+	std::ifstream instream(agendapath.AsString());
 	instream >> agenda;  
 
 	AgendaDialog dlg(agenda, settings);
@@ -129,10 +130,11 @@ BOOL AgendaApplication::InitInstance()
 #endif
 
   settings.WriteTo(inifile);
-  inifile.Write();
+  std::ofstream output(settingspath.AsString());
+  inifile.Write(output);
 
   if (!agenda.Empty()) {
-    std::wofstream outstream(agendapath.AsString().c_str());
+    std::ofstream outstream(agendapath.AsString().c_str());
     outstream << agenda;  
   }
 

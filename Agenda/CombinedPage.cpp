@@ -6,12 +6,9 @@
 #include "Agenda.h"
 #include "CombinedPage.h"
 
-#include <tchar.h>
-
 #include <AgendaModel/AgendaUtilities.h>
 #include <CustomControls/ItemListControl.h>
 #include <Utilities/Date.h>
-#include <Utilities/DateUtils.h>
 
 #include "afxdialogex.h"
 #include "AgendaSaver.h"
@@ -54,16 +51,15 @@ CombinedPage::CombinedPage(Agenda::Agenda & agenda,
     if (!m_Settings.HasDefaultActivity(_T("Play")))
         m_Settings.AddDefaultActivity(_T("Play"), false);
 
-    Utils::Date newdate(Utils::Date::Today());
-    Agenda::Date Today(Utils::Date::ToSystemTime(newdate));
-    std::vector<Agenda::Date> week(GetWeek(Today));
+    Utils::Date today(Utils::Today());
+    std::vector<Utils::Date> week(GetWeek(today));
 
     auto toIgnore(SettingUtils::ActvitiesToIgnore(settings));
 
     FileLoader loader(m_Settings);
     for (const auto& date : week)
     {
-        if (date == Today)
+        if (date == today)
             continue;
 
         Agenda::Agenda oldagenda;
@@ -107,22 +103,22 @@ BOOL CombinedPage::OnInitDialog()
       m_Description.AddString(m_Settings.GetDefaultActivities()[i].m_Description.c_str());
 
   // Read yesterday's items and add them:
-  Path agendapath(m_Settings.GetDataPath() + _T("*.age"));
-  std::tstring todayfile(Agenda::Date().String() + _T(".age"));
-  std::tstring yesterdayfile;
+  Path agendapath(m_Settings.GetDataPath() + "*.age");
+  std::string todayfile(Agenda::Date().String() + ".age");
+  std::string yesterdayfile;
 
   WIN32_FIND_DATA finddata;
   HANDLE hFile = FindFirstFile(agendapath.AsString().c_str(), &finddata);
   if (hFile !=  INVALID_HANDLE_VALUE) {
-    std::tstring latestfile(finddata.cFileName);
-    if (latestfile != std::tstring(Agenda::Date().String()) + _T(".age")) {
+    std::string latestfile(finddata.cFileName);
+    if (latestfile != std::string(Agenda::Date().String()) + ".age") {
       if (yesterdayfile.empty() || latestfile > yesterdayfile)
         yesterdayfile = latestfile;
     }
 
     while (FindNextFile(hFile, &finddata) != FALSE) {
       latestfile = finddata.cFileName;
-      if (latestfile != std::tstring(Agenda::Date().String()) + _T(".age")) {
+      if (latestfile != std::string(Agenda::Date().String()) + ".age") {
         if (yesterdayfile.empty() || latestfile > yesterdayfile)
           yesterdayfile = latestfile;
       }
@@ -157,12 +153,12 @@ BOOL CombinedPage::OnInitDialog()
 
 void CombinedPage::RetrieveTime(Agenda::Time & time) const
 {
-  TCHAR text[1024];
+  char text[1024];
   m_Hour.GetWindowText(text, 1024);
-  int hours(_ttoi(text));
+  int hours(atoi(text));
   time.Hour(hours);
   m_Minutes.GetWindowText(text, 1024);
-  int minutes(_ttoi(text));
+  int minutes(atoi(text));
   time.Minute(minutes);
 }
 
@@ -185,7 +181,7 @@ void CombinedPage::DoDataExchange(CDataExchange* pDX)
 // CombinedPage message handlers
 void CombinedPage::OnBnClickedAdd()
 {
-    TCHAR text[1024];
+    char text[1024];
     m_Description.GetWindowText(text, 1024);
 
     AddItem(text);
@@ -193,17 +189,17 @@ void CombinedPage::OnBnClickedAdd()
 
 void CombinedPage::OnBnClickedWork()
 {
-    AddItem(_T("Work"));
+    AddItem("Work");
     WriteAgenda();
 }
 
 void CombinedPage::OnBnClickedPlay()
 {
-    AddItem(_T("Play"));
+    AddItem("Play");
     WriteAgenda();
 }
 
-void CombinedPage::AddItem(const std::tstring& item)
+void CombinedPage::AddItem(const std::string& item)
 {
     Agenda::Time time;
 
@@ -211,7 +207,7 @@ void CombinedPage::AddItem(const std::tstring& item)
         RetrieveTime(time);
     }
     catch (std::runtime_error& error) {
-        MessageBox(Str::ToTString(error.what()).c_str(), _T("ERROR READING TIME"), MB_OK);
+        MessageBox(error.what(), "ERROR READING TIME", MB_OK);
         return;
     }
 
@@ -224,7 +220,7 @@ void CombinedPage::AddItem(const std::tstring& item)
     if (m_Description.FindString(0, item.c_str()) == CB_ERR)
       m_Description.InsertString(0, item.c_str());
 
-    if (item != L"Work" && item != L"Play")
+    if (item != "Work" && item != "Play")
         m_Description.SelectString(0, item.c_str());
   
     UpdateView();
@@ -233,10 +229,9 @@ void CombinedPage::AddItem(const std::tstring& item)
 void CombinedPage::WriteAgenda()
 {
     AgendaSaver Saver(m_Settings);
-    Utils::Date newdate(Utils::Date::Today());
-    Agenda::Date Today(Utils::Date::ToSystemTime(newdate));
+    Utils::Date today(Utils::Today());
 
-    if (!Saver.Save(Today, m_Today))
+    if (!Saver.Save(today, m_Today))
     {
         MessageBox(_T("Could not save agenda"), _T("ERROR WRITING AGENDA"), MB_OK);
     }
@@ -249,18 +244,15 @@ void CombinedPage::StallAutomaticUpdate()
     m_Timer = SetTimer(m_TimerID, 60000, NULL);
 }
 
-std::vector<Agenda::Date> CombinedPage::GetWeek(const Agenda::Date& today)
+std::vector<Utils::Date> CombinedPage::GetWeek(const Utils::Date& today)
 {
-    std::vector<Agenda::Date> dates;
+    std::vector<Utils::Date> dates;
 
-    SYSTEMTIME stime(today.ToSystemTime());
-    SYSTEMTIME sunday(Date::GetSundayBefore(stime));
-    Utils::Date startDate(Utils::Date::FromSystemTime(sunday));
+    Utils::Date startDate(Utils::GetSundayBefore(today));
 
-    for (size_t i = 0; i < 6; ++i)
-    {
+    for (size_t i = 0; i < 6; ++i) {
         startDate.AddDays(1);
-        dates.push_back(Agenda::Date(Utils::Date::ToSystemTime(startDate)));
+        dates.push_back(startDate);
     }
 
     return dates;

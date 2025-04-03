@@ -1,6 +1,10 @@
 #pragma once
 
-#include <list>
+
+namespace Utils {
+class Date;
+}
+
 
 namespace Agenda
 {
@@ -12,7 +16,7 @@ class Date;
 class IAgendaSaver
 {
 public:
-    virtual bool Save(const Date& date, const Agenda& agenda) const = 0;
+    virtual bool Save(const Utils::Date& date, const Agenda& agenda) const = 0;
 };
 
 } // namespace Agenda

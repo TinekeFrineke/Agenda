@@ -2,12 +2,11 @@
 
 #include "AgendaUtilities.h"
 
-#include "Utilities/DateUtils.h"
 #include "Utilities/Date.h"
 
 namespace Agenda
 {
-void GetTotals(const Agenda & agenda, std::map<std::tstring, Time, Str::ci_less>& aTotalMap)
+void GetTotals(const Agenda & agenda, std::map<std::string, Time, Str::ci_less>& aTotalMap)
 {
   for (Agenda::Agenda::ItemList::const_iterator iter = agenda.Begin();
         iter != agenda.End();
@@ -17,7 +16,7 @@ void GetTotals(const Agenda & agenda, std::map<std::tstring, Time, Str::ci_less>
   }
 }
 
-void GetTotals(std::list<const Agenda*> agendas, std::map<std::tstring, Time, Str::ci_less>& aTotalMap)
+void GetTotals(std::list<const Agenda*> agendas, std::map<std::string, Time, Str::ci_less>& aTotalMap)
 {
     for (const auto* agenda : agendas)
     {
@@ -25,9 +24,9 @@ void GetTotals(std::list<const Agenda*> agendas, std::map<std::tstring, Time, St
     }
 }
 
-Time GetWorkedTime(const Agenda& agenda, const std::vector<std::tstring>& activitiesToIgnore)
+Time GetWorkedTime(const Agenda& agenda, const std::vector<std::string>& activitiesToIgnore)
 {
-    typedef std::map<std::tstring, Time, Str::ci_less> TotalsMap;
+    typedef std::map<std::string, Time, Str::ci_less> TotalsMap;
     TotalsMap totalsMap;
     GetTotals(agenda, totalsMap);
 

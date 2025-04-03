@@ -6,13 +6,14 @@
 class Path;
 class Settings;
 
+
 class AgendaSaver
     : public Agenda::IAgendaSaver
 {
 public:
-    AgendaSaver(const Settings& settings);
+    explicit AgendaSaver(const Settings& settings);
 
-    virtual bool Save(const Agenda::Date& date,
+    virtual bool Save(const Utils::Date& date,
                       const Agenda::Agenda& agenda) const override;
 
 private:

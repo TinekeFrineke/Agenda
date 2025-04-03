@@ -19,10 +19,10 @@ class TotalTime
 public:
     TotalTime();
 
-    unsigned int            GetHour() const;
-    unsigned int            GetMinute() const;
+    unsigned int GetHour() const;
+    unsigned int GetMinute() const;
 
-    std::tstring            String() const;
+    std::string String() const;
 
     TotalTime& operator+=(const Time& aTime);
     TotalTime& operator+=(int aMinutes);

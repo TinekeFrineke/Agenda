@@ -12,7 +12,7 @@ class FileLoader
 public:
     FileLoader(const Settings& settings);
 
-    virtual bool Load(const Agenda::Date& date,
+    virtual bool Load(const Utils::Date& date,
                       Agenda::Agenda& agenda) const override;
 
 private:

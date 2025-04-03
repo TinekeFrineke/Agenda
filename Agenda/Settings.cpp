@@ -1,5 +1,10 @@
 #include "stdafx.h"
 
+#include <cstdlib>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+
 #include <Utilities/Inifile.h>
 
 #include "Settings.h"
@@ -7,12 +12,12 @@
 namespace
 {
 
-const std::tstring cWorkAndPlay(_T("WorkAndPlay"));
-const std::tstring cOldAgenda(_T("OldAgenda"));
-const std::tstring cCombined(_T("Combined"));
-const std::tstring cBoth(_T("Both"));
+const std::string cWorkAndPlay("WorkAndPlay");
+const std::string cOldAgenda("OldAgenda");
+const std::string cCombined("Combined");
+const std::string cBoth("Both");
 
-Settings::Type ToType(const std::tstring& aName)
+Settings::Type ToType(const std::string& aName)
 {
     if (aName == cOldAgenda)
         return Settings::Type::OldAgenda;
@@ -26,7 +31,7 @@ Settings::Type ToType(const std::tstring& aName)
     return Settings::Type::Combined;
 }
 
-std::tstring ToString(Settings::Type aType)
+std::string ToString(Settings::Type aType)
 {
     switch (aType)
     {
@@ -51,31 +56,31 @@ Settings::Settings(const Path & path)
 {
 }
 
-void Settings::AddDefaultActivity(const std::tstring& rName, bool KeepScore)
+void Settings::AddDefaultActivity(const std::string& rName, bool KeepScore)
 {
     m_DefaultActivities.push_back(Activity(rName, KeepScore));
 }
 
 void Settings::FillFrom(const Inifile & inifile)
 {
-  std::tstringstream stream(inifile[_T("General")][_T("StartDate")]);
+  std::stringstream stream(inifile["General"]["StartDate"]);
   stream >> m_DefaultStartDate;
 
-  stream.str(inifile[_T("General")][_T("EndDate")]);
+  stream.str(inifile["General"]["EndDate"]);
   stream >> m_DefaultEndDate;
 
-  m_AgendaType = ToType(inifile[_T("General")][_T("Type")]);
+  m_AgendaType = ToType(inifile["General"]["Type"]);
 
-  unsigned int count(_ttoi(inifile[_T("Items")][_T("Count")].c_str()));
+  unsigned int count(std::atoi(inifile["Items"]["Count"].c_str()));
   for (unsigned int i = 0; i < count; ++i) {
-    TCHAR number[10];
-    _stprintf_s(number, _T("%u"), i);
-    stream.str(inifile[_T("Items")][number]);
+    char number[10];
+    sprintf_s(number, "%u", i);
+    stream.str(inifile["Items"][number]);
     if (number[0] != 0) {
-        size_t pos = stream.str().find(_T(';'));
+        size_t pos = stream.str().find(';');
         if (pos != std::string::npos && pos > 0) {
             AddDefaultActivity(stream.str().substr(0, pos),
-                               stream.str()[stream.str().length() - 1] == _T('0') ? false : true);
+                               stream.str()[stream.str().length() - 1] == '0' ? false : true);
         }
     }
   }
@@ -83,23 +88,23 @@ void Settings::FillFrom(const Inifile & inifile)
 
 void Settings::WriteTo(Inifile & inifile)
 {
-  inifile[_T("General")][_T("StartDate")] = m_DefaultStartDate.String();
-  inifile[_T("General")][_T("EndDate")]   = m_DefaultEndDate.String();
-  inifile[_T("General")][_T("Type")] = ToString(m_AgendaType);
+  inifile["General"]["StartDate"] = m_DefaultStartDate.String();
+  inifile["General"]["EndDate"]   = m_DefaultEndDate.String();
+  inifile["General"]["Type"] = ToString(m_AgendaType);
 
 
-  TCHAR number[10];
-  _stprintf_s(number, _T("%zu"), m_DefaultActivities.size());
-  inifile[_T("Items")][_T("Count")]       = number;
+  char number[10];
+  sprintf_s(number, "%zu", m_DefaultActivities.size());
+  inifile["Items"]["Count"] = number;
 
   for (unsigned int i = 0; i < m_DefaultActivities.size(); ++i) {
-    _stprintf_s(number, _T("%u"), i);
-    inifile[_T("Items")][number] = m_DefaultActivities[i].m_Description
-                                   + (m_DefaultActivities[i].m_AddTimeToTotal ? _T(";1") : _T(";0"));
+    sprintf_s(number, _T("%u"), i);
+    inifile["Items"][number] = m_DefaultActivities[i].m_Description
+                                   + (m_DefaultActivities[i].m_AddTimeToTotal ? ";1" : ";0");
   }
 }
 
-bool Settings::HasDefaultActivity(const std::tstring & description) const
+bool Settings::HasDefaultActivity(const std::string & description) const
 {
   for (size_t i = 0; i < m_DefaultActivities.size(); ++i)
     if (m_DefaultActivities[i].m_Description == description)
@@ -108,7 +113,7 @@ bool Settings::HasDefaultActivity(const std::tstring & description) const
   return false;
 }
 
-bool Settings::ShouldAddDefeaultActivity(const std::tstring & description) const
+bool Settings::ShouldAddDefeaultActivity(const std::string & description) const
 {
   for (size_t i = 0; i < m_DefaultActivities.size(); ++i)
     if (m_DefaultActivities[i].m_Description == description)
@@ -120,14 +125,14 @@ bool Settings::ShouldAddDefeaultActivity(const std::tstring & description) const
 void Settings::LoadAgenda(Agenda::Agenda & agenda, const Agenda::Date & date) const
 {
   Path path(m_DataPath);
-  path += date.String() + _T(".age");
+  path += date.String() + ".age";
   LoadAgenda(agenda, path);
 }
 
 void Settings::LoadAgenda(Agenda::Agenda & agenda, const Path & path) const
 {
   agenda.Clear();
-  std::tifstream stream(path.AsString().c_str());
+  std::ifstream stream(path.AsString().c_str());
   stream >> agenda;
 }
 
@@ -135,7 +140,7 @@ void Settings::SaveAgenda(const Agenda::Agenda & agenda, const Agenda::Date & da
 {
   if (!agenda.Empty()) {
     Path path(m_DataPath);
-    path += date.String() + _T(".age");
+    path += date.String() + ".age";
     SaveAgenda(agenda, path);
   }
 }
@@ -143,7 +148,7 @@ void Settings::SaveAgenda(const Agenda::Agenda & agenda, const Agenda::Date & da
 void Settings::SaveAgenda(const Agenda::Agenda & agenda, const Path & path) const
 {
   if (!agenda.Empty()) {
-    std::tofstream stream(path.AsString().c_str());
+    std::ofstream stream(path.AsString());
     stream << agenda;
   }
 }

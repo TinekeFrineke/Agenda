@@ -3,6 +3,7 @@
 #include <AgendaModel/Agenda.h>
 #include <AgendaModel/TotalTime.h>
 #include <CustomControls/TabPage.h>
+#include <Utilities/Date.h>
 
 #include "resource.h"
 #include "afxwin.h"
@@ -18,74 +19,74 @@
 
 class Settings;
 
-class CombinedPage : public CDialogEx, public TabPage
+class CombinedPage: public CDialogEx, public TabPage
 {
-	DECLARE_DYNAMIC(CombinedPage)
+    DECLARE_DYNAMIC(CombinedPage)
 
 public:
-	CombinedPage(Agenda::Agenda & agenda,
-			     Settings & settings,
-				 CWnd* pParent = NULL);   // standard constructor
-	virtual ~CombinedPage();
+    CombinedPage(Agenda::Agenda& agenda,
+                 Settings& settings,
+                 CWnd* pParent = NULL);   // standard constructor
+    virtual ~CombinedPage();
 
-	virtual CDialog *       GetDialog() override { return this; }
-	virtual BOOL            OnInitDialog() override;
-	virtual void            OnCancel() override {}
-	virtual void            OnOK() override {}
+    virtual CDialog* GetDialog() override { return this; }
+    virtual BOOL OnInitDialog() override;
+    virtual void OnCancel() override {}
+    virtual void OnOK() override {}
 
-	void                    UpdateTime();
-	void                    UpdateTime(const Agenda::Time & time);
-	void                    RetrieveTime(Agenda::Time & time) const;
+    void UpdateTime();
+    void UpdateTime(const Agenda::Time& time);
+    void RetrieveTime(Agenda::Time& time) const;
 
-// Dialog Data
+    // Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_COMBINED_PAGE };
+    enum { IDD = IDD_COMBINED_PAGE };
 #endif
 
-	afx_msg void OnBnClickedAdd();
-	afx_msg void OnBnClickedWork();
-	afx_msg void OnBnClickedPlay();
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnEnChangeHour();
-	afx_msg void OnEnChangeMinute();
-	afx_msg void OnDeltaposHourspin(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposMinutespin(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnNMDblclkActivitylist(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEnSetfocusHour();
-	afx_msg void OnBnClickedNow();
-	afx_msg void OnEnSetfocusMinute();
+    afx_msg void OnBnClickedAdd();
+    afx_msg void OnBnClickedWork();
+    afx_msg void OnBnClickedPlay();
+    afx_msg void OnTimer(UINT_PTR nIDEvent);
+    afx_msg void OnEnChangeHour();
+    afx_msg void OnEnChangeMinute();
+    afx_msg void OnDeltaposHourspin(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnDeltaposMinutespin(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnNMDblclkActivitylist(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnEnSetfocusHour();
+    afx_msg void OnBnClickedNow();
+    afx_msg void OnEnSetfocusMinute();
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 
 private:
-	void UpdateView();
-	void AddItem(const std::tstring& item);
-	void WriteAgenda();
-	// Makes sure the timer is not automatically updated in the next minute
-	void StallAutomaticUpdate();
+    void UpdateView();
+    void AddItem(const std::string& item);
+    void WriteAgenda();
+    // Makes sure the timer is not automatically updated in the next minute
+    void StallAutomaticUpdate();
 
-	static std::vector<Agenda::Date> GetWeek(const Agenda::Date& today);
+    static std::vector<Utils::Date> GetWeek(const Utils::Date& today);
 
-	Agenda::Agenda &    m_Today;
-	Settings &          m_Settings;
+    Agenda::Agenda& m_Today;
+    Settings& m_Settings;
 
-	CComboBox           m_Description;
-	AgendaItemList      m_Items;
-	CEdit               m_Hour;
-	CEdit               m_Minutes;
-	CButton m_Now;
+    CComboBox           m_Description;
+    AgendaItemList      m_Items;
+    CEdit               m_Hour;
+    CEdit               m_Minutes;
+    CButton m_Now;
 
-	const UINT_PTR      m_TimerID;
-	UINT_PTR            m_Timer;
-	CEdit               m_Totaal;
-	CEdit               m_Week;
+    const UINT_PTR      m_TimerID;
+    UINT_PTR            m_Timer;
+    CEdit               m_Totaal;
+    CEdit               m_Week;
 
-	Agenda::TotalTime m_WeekTotals;
+    Agenda::TotalTime m_WeekTotals;
 
-	CButton m_WorkButton;
-	CButton m_PlayButton;
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+    CButton m_WorkButton;
+    CButton m_PlayButton;
+    afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };

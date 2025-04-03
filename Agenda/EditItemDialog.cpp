@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 #include "../AgendaModel/Agenda.h"
-#include "../AgendaModel/Time.h"
+#include "../AgendaModel/MyTime.h"
 
 
 // EditItemDialog dialog
