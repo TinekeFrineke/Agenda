@@ -2,9 +2,11 @@
 #include "agenda.h"
 
 #include <assert.h>  
+#include <numeric>
+#include <optional>
 
-#include <Utilities/Inifile.h>
-#include <Utilities/strutils.h>
+#include <utilities/Inifile.h>
+#include <utilities/strutils.h>
 
 
 namespace Agenda
@@ -373,25 +375,34 @@ std::ostream& operator<<(std::ostream& aStream, const Agenda::Date& aDate)
     return aStream;
 }
 
+namespace {
+std::optional<Agenda::Item> ToItem(const std::string& line) {
+    std::vector<std::string> tokens;
+    if (Str::StrTok(line, " ", tokens) < 3)
+        return {};
+
+    Agenda::Item item;
+    item.Begin(Agenda::ToTime(tokens.front()));
+    item.End(Agenda::ToTime(tokens.back()));
+    tokens.erase(tokens.begin());
+    tokens.erase(tokens.end() - 1);
+
+    auto task = std::accumulate(tokens.begin(), tokens.end(), std::string(" "));
+    Str::Trim(task);
+    item.SetTaskName(task);
+    return item;
+}
+}
+
 //------------------------------------------------------------------------------
 std::istream& operator>>(std::istream& aStream, Agenda::Item& anItem)
 {
-    Agenda::Item item;
-
     std::string line;
+    std::getline(aStream, line);
 
-    aStream >> line;
-    if (aStream.eof())
-        return aStream;
-
-    item.Begin(Agenda::ToTime(line));
-    aStream >> line;
-    item.SetTaskName(Str::Decode(line.c_str()));
-    aStream >> line;
-    item.End(Agenda::ToTime(line));
-
-    if (!aStream.fail())
-        anItem = item;
+    auto item = ToItem(line);
+    if (item)
+        anItem = *item;
 
     return aStream;
 }
@@ -402,7 +413,7 @@ std::ostream& operator<<(std::ostream& aStream, const Agenda::Item& anItem)
 {
     aStream << anItem.GetBegin()
         << " "
-        << Str::Encode(anItem.GetTaskName().c_str())
+        << anItem.GetTaskName()
         << " "
         << anItem.GetEnd()
         << std::endl;

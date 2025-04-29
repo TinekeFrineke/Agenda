@@ -61,7 +61,7 @@ void Settings::AddDefaultActivity(const std::string& rName, bool KeepScore)
     m_DefaultActivities.push_back(Activity(rName, KeepScore));
 }
 
-void Settings::FillFrom(const Inifile & inifile)
+void Settings::FillFrom(const Inifile& inifile)
 {
   std::stringstream stream(inifile["General"]["StartDate"]);
   stream >> m_DefaultStartDate;
@@ -86,7 +86,7 @@ void Settings::FillFrom(const Inifile & inifile)
   }
 }
 
-void Settings::WriteTo(Inifile & inifile)
+void Settings::WriteTo(Inifile& inifile)
 {
   inifile["General"]["StartDate"] = m_DefaultStartDate.String();
   inifile["General"]["EndDate"]   = m_DefaultEndDate.String();

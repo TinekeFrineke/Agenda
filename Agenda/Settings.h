@@ -6,8 +6,9 @@
 
 #include "../AgendaModel/Agenda.h"
 
+
 class Inifile;
-class Path;
+
 
 class Settings
 {
@@ -25,8 +26,8 @@ public:
 
     void AddDefaultActivity(const std::string& rName, bool KeepScore);
 
-    void FillFrom(const Inifile & inifile);
-    void WriteTo(Inifile & inifile);
+    void FillFrom(const Inifile& inifile);
+    void WriteTo(Inifile& inifile);
 
     bool HasDefaultActivity(const std::string & description) const;
     bool ShouldAddDefeaultActivity(const std::string & description) const;
