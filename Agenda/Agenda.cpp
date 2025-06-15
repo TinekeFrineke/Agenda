@@ -93,7 +93,7 @@ BOOL AgendaApplication::InitInstance()
     // Create the agenda settings item
     Path settingspath(path + "agenda.ini");
     std::ifstream input(settingspath.AsString());
-    Inifile inifile;
+    utils::Inifile inifile;
     input >> inifile;
     Settings settings(path);
     settings.FillFrom(inifile);

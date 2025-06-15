@@ -101,13 +101,13 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Projects\VC2019;C:\Projects\Combined\utilities_versions\v1.0.1\interface\;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Projects\VC2019;C:\Projects\Combined\utilities\interface\;$(SolutionDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>E:\Projects\VC2015</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(SolutionDir)$(PlatformTarget)\$(Configuration)/CustomControls.lib;$(SolutionDir)$(PlatformTarget)\$(Configuration)/AgendaModel.lib;C:\Projects\Combined\utilities_versions\v1.0.1\build\vc2019\$(PlatformTarget)\$(Configuration)\Utilities.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(PlatformTarget)\$(Configuration)/CustomControls.lib;$(SolutionDir)$(PlatformTarget)\$(Configuration)/AgendaModel.lib;C:\Projects\Combined\utilities\bin\vs2019\$(Platform)\$(Configuration)\Utilities.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -126,12 +126,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Projects\VC2019;C:\Projects\Combined\utilities_versions\v1.0.1\interface\;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Projects\VC2019;C:\Projects\Combined\utilities\interface\;$(SolutionDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>$(SolutionDir)$(PlatformTarget)\$(Configuration)/CustomControls.lib;$(SolutionDir)$(PlatformTarget)\$(Configuration)/AgendaModel.lib;C:\Projects\Combined\utilities_versions\v1.0.1\build\vc2019\$(PlatformTarget)\$(Configuration)\Utilities.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(PlatformTarget)\$(Configuration)/CustomControls.lib;$(SolutionDir)$(PlatformTarget)\$(Configuration)/AgendaModel.lib;C:\Projects\Combined\utilities\bin\vs2019\$(Platform)\$(Configuration)\Utilities.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -152,14 +152,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Projects\VC2019;C:\Projects\Combined\utilities_versions\v1.0.1\interface\;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Projects\VC2019;C:\Projects\Combined\utilities\interface\;$(SolutionDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(SolutionDir)$(PlatformTarget)\$(Configuration)/CustomControls.lib;$(SolutionDir)$(PlatformTarget)\$(Configuration)/AgendaModel.lib;C:\Projects\Combined\utilities_versions\v1.0.1\build\vc2019\$(PlatformTarget)\$(Configuration)\Utilities.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(PlatformTarget)\$(Configuration)/CustomControls.lib;$(SolutionDir)$(PlatformTarget)\$(Configuration)/AgendaModel.lib;C:\Projects\Combined\utilities\bin\vs2019\$(Platform)\$(Configuration)\Utilities.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -180,14 +180,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Projects\VC2019;C:\Projects\Combined\utilities_versions\v1.0.1\interface\;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Projects\VC2019;C:\Projects\Combined\utilities\interface\;$(SolutionDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(SolutionDir)$(PlatformTarget)\$(Configuration)/CustomControls.lib;$(SolutionDir)$(PlatformTarget)\$(Configuration)/AgendaModel.lib;C:\Projects\Combined\utilities_versions\v1.0.1\build\vc2019\$(PlatformTarget)\$(Configuration)\Utilities.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(PlatformTarget)\$(Configuration)/CustomControls.lib;$(SolutionDir)$(PlatformTarget)\$(Configuration)/AgendaModel.lib;C:\Projects\Combined\utilities\bin\vs2019\$(Platform)\$(Configuration)\Utilities.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
